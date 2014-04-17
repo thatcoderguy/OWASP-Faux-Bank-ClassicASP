@@ -1,4 +1,4 @@
-﻿html {
+html {
     background-color: #e2e2e2;
     margin: 0;
     padding: 0;
@@ -570,11 +570,11 @@ th {
     }
 
     th.asc a:after {
-        content: '▲';
+        content: '?';
     }
 
     th.desc a:after {
-        content: '▼';
+        content: '?';
     }
 
 td {
@@ -584,6 +584,11 @@ td {
 
 tr.pager td {
     padding: 0 0.25em 0 0;
+}
+
+#transactions td,
+#transactions th {
+	padding: 5px;
 }
 
 

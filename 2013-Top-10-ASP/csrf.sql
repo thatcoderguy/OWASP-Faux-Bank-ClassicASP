@@ -41,7 +41,6 @@ GO
 
 
 
-
 CREATE PROCEDURE sp_registeraccount
 	@strEmail nvarchar(256),
 	@strPassword nvarchar(500),
@@ -53,11 +52,11 @@ BEGIN
 	SET NOCOUNT ON;
 
 	INSERT INTO tblAccount(email,password,sessionkey,name)
-	VALUES (@strEmail,@strPassword,NULL,@strName)
+	VALUES (@strEmail,@strPassword,NULL,strName)
 
 	SELECT SCOPE_IDENTITY() as accountnumber
 END
-GO
+
 
 CREATE PROCEDURE sp_authenticate
 	@intAccountNumber bigint,
@@ -91,7 +90,7 @@ BEGIN
 				END
 				SET @strSessionKey='n'+@strSessionKey+'n'
 			
-				SELECT @userID2=MIN(accountid) FROM tblAccount WHERE CAST(sessionkey AS varbinary(50))=CAST(@strSessionKey AS varbinary(50))
+				SELECT @userID2=MIN(accountid) FROM tblAccount WHERE CAST(@sessionkey AS varbinary(50))=CAST(@strSessionKey AS varbinary(50))
 			END
 
 			UPDATE tblAccount 
@@ -136,7 +135,7 @@ BEGIN
 	END
 
 END
-GO
+
 
 CREATE PROCEDURE sp_gettransactions
 	@strSessionKey nvarchar(50)
@@ -158,7 +157,7 @@ SET NOCOUNT OFF;
 	WHERE a2.accountid=@intAccountID OR a1.accountid=@intAccountID
 
 END
-GO
+
 
 CREATE PROCEDURE sp_createtransaction
 	@intToAccountID bigint,
@@ -212,4 +211,3 @@ BEGIN
 	
 
 END
-GO

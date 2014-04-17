@@ -1,3 +1,22 @@
+<%
+
+	dim link
+
+	if not request.cookies("sessionkey") is nothing then
+
+		if request.cookies("sessionkey")<>"SESSIONKEYINVALID" and request.cookies("sessionkey")<>"" then
+			link="<a href=""/Account"">Account</a>"
+		else
+			link="<a href=""/Login"">Login</a>"
+		end if
+
+	else
+
+		link="<a href=""/Login"">Login</a>"
+
+	end if
+
+%>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -26,7 +45,7 @@
                             <li><a href="/">Home</a></li>
                             <li><a href="/About">About</a></li>
                             <li><a href="/Contact">Contact</a></li>
-                            <li><a href="/Login">Login</a></li>
+                            <li><%= link %></li>
                         </ul>
                     </nav>
                 </div>
@@ -39,7 +58,7 @@
 
 <hgroup class="title">
     <h1>About.</h1>
-    <h2>Faux Bank is an open source project designed as a proof of concept for oWASP's top 10 vulnerabilities and as an educational tool for web developers.</h2>
+    <h2>Faux Bank is an open source project designed as a proof of concept for <a href="https://www.owasp.org/index.php/Top_10_2013-Top_10">oWASP's top 10 vulnerabilities</a> and as an educational tool for web developers.</h2>
 </hgroup>
 
 <article>
@@ -51,6 +70,19 @@
         So far the following vulnerabilities has been implemented into the project:
         <ol>
         <li>Cross Site Request Forgery (CSRF or XSRF)</li>
+        </ol>
+
+        The other 9 security vulnerabilities to implement are:
+        <ol>
+        <li>Cross Site Scripting (XSS)</li>
+        <li>SQL Injection</li>
+        <li>Broken Authentication and Session Management</li>
+        <li>Insecure Direct Object Reference</li>
+        <li>Security Misconfigration</li>
+        <li>Sensitive Data Exposure</li>
+        <li>Missing Function Level Access Control</li>
+        <li>Using Components With Know Vulnerabilities</li>
+        <li>Unvalidated Redirects and Forwards</li>
         </ol>
         This list will increase as the project is developed further.
     </p>
@@ -84,14 +116,6 @@
 
         <script src="/Scripts/jquery-1.8.2.js"></script>
 
-
-
-<!-- Visual Studio Browser Link -->
-<script type="application/json" id="__browserLink_initializationData">
-    {"appName":"InternetExplorer","requestId":"4af024c53eab4ffd988fe4cd4e1c92ff"}
-</script>
-<script type="text/javascript" src="http://localhost:6540/79a303fa17de4d179f97b2148a1bbba0/browserLink" async="async"></script>
-<!-- End Browser Link -->
 
 </body>
 </html>

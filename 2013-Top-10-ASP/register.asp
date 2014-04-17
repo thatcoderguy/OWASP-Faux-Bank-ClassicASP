@@ -1,6 +1,43 @@
+<!-- #include file="functions.asp" -->
 <%
 
-	dim link
+	dim recordset,accountnumber,link
+
+	'''login form has been submitted, so try to log in.
+	if request.form("submitted")="1" then
+
+		on error resume next
+
+		connecttodatabase()
+		set recordset = querydatabase("sp_registeraccount '" & SQLStr(request.form("email")) & "','" & SQLStr(request.form("password")) & "','" & SQLStr(request.form("name")) & "';")
+
+		if not recordset is nothing then
+
+			if not recordset.eof then
+
+				accountnumber = recordset("accountnumber")
+
+				disposequery(recordset)
+
+			else
+
+				accountnumber="ERROR"
+
+			end if
+
+		else
+
+			accountnumber="ERROR"
+
+		end if
+
+		disconnectfromdatabase()
+
+	else
+
+		accountnumber=""
+
+	end if
 
 	if not request.cookies("sessionkey") is nothing then
 
@@ -37,6 +74,7 @@
                 </div>
                 <div class="float-right">
                     <section id="login">
+
                     </section>
                     <nav>
                         <ul id="menu">
@@ -55,12 +93,38 @@
         <div class="content-wrapper">
             <hgroup class="title">
                 <h1>Welcome to Faux Bank.</h1><br />
-                <h2>The only bank with all of <a href="https://www.owasp.org/index.php/Top_10_2013-Top_10">oWASP.org's top 10 web vulnerabilities</a>!</h2>
+                <h2>Create a new account.</h2>
             </hgroup><br />
-            <p>
-                Open up an account with us today and we'll credit your account with &pound;100!.
-            </p>
-            <p>It only takes seconds to register an account, all we need is your name, email address and password.</p>
+
+            <% if accountnumber<>"ERROR" AND accountnumber<>"" then %>
+
+				<p>Thank you for creating a new account.<Br />
+				Your new account number is: <strong><%= accountnumber %></strong></p>
+				<p>Please do not lose this number, as you will need it to log into your account</p>
+				<p><a href="/login">Log into your account</a></p>
+
+            <% else %>
+
+				<form action="/register" method="post" id="loginform">
+				<input type="hidden" name="submitted" value="1" />
+				<table>
+				<tr>
+				<td>Name:</td><td><input type="text" name="name" required  value="" />
+				</tr>
+				<tr>
+				<td>Email Address:</td><td><input type="text" name="email" required value="" />
+				</tr>
+				<tr>
+				<td>Password:</td><td><input type="password" name="password" required  value="" />
+				</tr>
+				<tr>
+				<td colspan="2"><input  style="float: right;" type="submit" name="submit" value="Register" /></td>
+				</tr>
+				</table>
+				</form>
+
+			<% end if %>
+
         </div>
     </section>
 

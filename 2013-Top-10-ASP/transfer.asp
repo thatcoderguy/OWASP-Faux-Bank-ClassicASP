@@ -1,143 +1,149 @@
+<!-- #include file="functions.asp" -->
 <%
 
-function SQLStr(strTemp)
-	'##################################################
-	'##### prevents sql injection and some sql errors #####
-	'##################################################
+	dim ousersession,recordset,link,transactionok
 
-	if isnull(strTemp) then
-		SQLStr=""
-	else
-		SQLStr=replace(strTemp,"'","''")
-	end if
-end function
+	transactionok=false
 
-function SQLNum(intTemp)
-	'##################################################
-	'##### prevents sql injection and some sql errors #####
-	'##################################################
+	connecttodatabase()
 
-	if isnull(intTemp) then
-		SQLNum="null"
-	else
-		intTemp=trim(intTemp)
-		if isNumber(intTemp) then
-			SQLNum=intTemp
-		else
-			SQLNum=0
-		end if
-	end if
-end function
+	''validate user session with session token (returns user object with account details)
+	set recordset = querydatabase("sp_authenticate 0,'','" & SQLStr(request.cookies("sessionkey")) & "';")
+	set ousersession = validateSession(recordset)
 
-function SQLBit(intTemp)
-	'##################################################
-	'##### prevents sql injection and some sql errors #####
-	'##################################################
+	if ousersession is nothing then
 
-	if isnull(intTemp) then intTemp=""
-	if not cstr(trim(intTemp))="0" and not lcase(cstr(trim(intTemp)))="false" and not trim(intTemp)="" then
-		SQLBit=1
-	else
-		SQLBit=0
-	end if
-end function
-
-
-dim ocon,ocom,ors
-
-	SET ocon=server.createobject("ADODB.connection")
-	SET ocom=server.createobject("ADODB.command")
-	SET ors=server.createobject("ADODB.recordset")
-
-	ocon.open "Provider=sqloledb;Data Source=WEBWIZARD\SQLEXPRESS;Initial Catalog=CSRF;Integrated Security=SSPI"
-	ocom.activeconnection=ocon
-	ocom.commandtext="sp_authenticate 0,'','" & SQLStr(request.cookies("sessionkey")) & "';"
-
-	SET ors=ocom.execute()
-
-	if  ors.eof then
-
-		ocon.close
-		response.redirect "login.asp?error=invalid"
+		disconnectfromdatabase()
+		response.redirect "/login?error=invalid"
 
 	end if
 
+	disposequery(recordset)
 
-if request.form("submitted")="1" then
+	if request.form("submitted")="1" then
 
-	ors.close
+		set recordset = querydatabase("sp_createtransaction " & SqlNum(request.form("accountto")) & "," & SqlNum(request.form("amount"))& ",'" & SQLStr(request.cookies("sessionkey")) & "';")
 
-	ocom.commandtext="sp_createtransaction " & SqlNum(request.form("accountto")) & "," & SqlNum(request.form("amount"))& ",'" & SQLStr(request.cookies("sessionkey")) & "';"
-	SET ors=ocom.execute()
+		if recordset.eof then
 
-	if ors.eof then
-
-		ocon.close
-		response.redirect "transfer.asp?error=invalidaccount"
-
-	else
-
-		if ors("message")="invalidaccount" then
-
-			ors.close
-			ocon.close
+			discountfromdatabase()
 			response.redirect "transfer.asp?error=invalidaccount"
 
 		else
 
-			ors.close
-			ocon.close
+			if recordset("message")="invalidaccount" then
 
-		%>
+				disposequery(recordset)
+				disconnectfromdatabase()
 
-		<p>Thank you</P>
-		<p>Your transfer of £<%= request.form("amount") %> to account <%= request.form("accountto") %> <br />
-		has been completed</p>
+				response.redirect "/Transfer?error=invalidaccount"
 
-		<p><a href="account.asp">Back to my account</p>
+			else
 
-		<%
+				transactionok=true
+				disposequery(recordset)
+
+			end if
 
 		end if
 
+		disconnectfromdatabase()
 
 	end if
 
-else
-
-ocon.close
-
 %>
-<html>
-<body>
 
-<h1>Welcome to</h1><br /><br />
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Home Page - My ASP.NET MVC Application</title>
+        <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+        <meta name="viewport" content="width=device-width" />
+        <link href="/Content/site.css" rel="stylesheet"/>
 
-<p>Your account number: <%= accountnumber %></p><br /><br />
+        <script src="/Scripts/modernizr-2.6.2.js"></script>
 
-<h2>Transfer money</h2>
+    </head>
+    <body>
+        <header>
+            <div class="content-wrapper">
+                <div class="float-left">
+                    <p class="site-title"><a href="/"><img src="/images/logo.png" /></a></p>
+                </div>
+                <div class="float-right">
+                    <section id="login">
 
-<form action="transfer.asp" method="post" id="transferform">
-<input type="hidden" name="submitted" value="1" />
-<table>
-<tr>
-<td>Transfer to account</td><td><input type="text" name="accountto" value="" />
-</tr>
-<tr>
-<td>Amount:</td><td>£<input type="text" name="amount" value="0" /></td>
-</tr>
-<tr>
-<td colspan="2"><input type="submit" name="submit" value="Transfer" /></td>
-</tr>
-</form>
+                    </section>
+                    <nav>
+                        <ul id="menu">
+                            <li><a href="/">Home</a></li>
+                            <li><a href="/About">About</a></li>
+                            <li><a href="/Contact">Contact</a></li>
+                            <li><a href="/Account">Account</a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </header>
+        <div id="body">
 
-<% if request.querystring("error")<>"" then %>
+    <section class="featured">
+        <div class="content-wrapper">
+            <hgroup class="title">
+                <h1>Welcome to Faux Bank, <%= ousersession.username %> .</h1><br />
+                <h3>Statement for account number: <strong><%= ousersession.accountnumber %></strong></h3>
 
-<strong>Sorry, but that the account number: <%= request.form("accountto") %>  was not found</strong>
+            </hgroup><br />
 
+				<% if transactionok then %>
 
-<%
+					<p>Thank you</p>
+					<p>Your transfer of &pound;<%= request.form("amount") %> to account <%= request.form("accountto") %> <br />has been completed</p>
 
-end if
+					<p><a href="/Account">Back to my account</p>
 
-end if %>
+				<% else %>
+
+					<form action="/Transfer" method="post" id="transferform">
+					<input type="hidden" name="submitted" value="1" />
+					<table>
+					<tr>
+					<td>Transfer to Account:</td><td><input type="text" name="accountto" value="" />
+					</tr>
+					<tr>
+					<td>Amount:</td><td>&pound;<input type="text" name="amount" value="0" /></td>
+					</tr>
+					<tr>
+					<td colspan="2"><input style="float: right;" type="submit" name="submit" value="Transfer" /></td>
+					</tr>
+					</table>
+					</form>
+
+				<% end if
+
+				if request.querystring("error")<>"" then %>
+
+					<p><strong>Sorry, but the account number was invalid</strong></p>
+
+				<% end if %>
+
+        </div>
+    </section>
+
+            <section class="content-wrapper main-content clear-fix">
+
+            </section>
+        </div>
+        <footer>
+            <div class="content-wrapper">
+                <div class="float-left">
+                    <p>&copy; 2014 - That Coder Guy <a href="http://www.thatcoderguy.co.uk">www.thatcoderguy.co.uk</a></p>
+                </div>
+            </div>
+        </footer>
+
+        <script src="/Scripts/jquery-1.8.2.js"></script>
+
+</body>
+</html>

@@ -1,4 +1,7 @@
+<%
 
+''global vars for database queries
+dim ocon,ocom
 
 function SQLStr(strTemp)
 	'##################################################
@@ -21,12 +24,13 @@ function SQLNum(intTemp)
 		SQLNum="null"
 	else
 		intTemp=trim(intTemp)
-		if isNumber(intTemp) then
-			SQLNum=intTemp
+		if isNumeric(intTemp) then
+			SQLNum=cstr(intTemp)
 		else
-			SQLNum=0
+			SQLNum="0"
 		end if
 	end if
+
 end function
 
 function SQLBit(intTemp)
@@ -48,26 +52,133 @@ function GetConnectionString()
 	'##### read the web.config file to get the connection string #####
 	'##################################################
 
-dim xmlDoc,xmlappSettings,xmladd
+	dim xmlDoc,xmlappSettings,xmladd
 
-set xmlDoc=server.CreateObject("Microsoft.XMLDOM")
-set xmlappSettings=server.CreateObject("Microsoft.XMLDOM")
-set xmladd=server.CreateObject("Microsoft.XMLDOM")
+	set xmlDoc=server.CreateObject("Microsoft.XMLDOM")
+	set xmlConfig=server.CreateObject("Microsoft.XMLDOM")
+	set xmlConStrings=server.CreateObject("Microsoft.XMLDOM")
+	set xmladd=server.CreateObject("Microsoft.XMLDOM")
 
-xmlDoc.async="false"
-xmlDoc.load(server.MapPath("web.config"))
+	GetConnectionString=""
 
-set xmlappSettings = xmldoc.GetElementsByTagName("appSettings").Item(0)
-set xmladd = xmlappSettings.GetElementsByTagName("add")
+	xmlDoc.async="false"
+	xmlDoc.load(server.MapPath("web.config"))
 
-for each x in xmladd
+	set xmlConfig = xmldoc.GetElementsByTagName("connectionStrings").Item(0)
+	set xmladd = xmlConfig.GetElementsByTagName("add")
 
-	'Check for the Atrribute Value
-	if  x.getAttribute("key") ="DefaultConnection" then
-		ReadWebConfig = x.getAttribute("value")
-		exit for
-	end if
+	for each x in xmladd
 
-next
+		'Check for the Atrribute Value
+		if x.getAttribute("name") ="DefaultConnection" then
+			GetConnectionString = x.getAttribute("connectionString")
+			exit for
+		end if
+
+	next
+
+	set xmladd=nothing
+	set xmlappSettings=nothing
+	set xmlDoc=nothing
+
 
 end function
+
+sub connecttodatabase()
+
+	set ocon=server.createobject("adodb.connection")
+	ocon.open GetConnectionString()
+
+end sub
+
+sub disconnectfromdatabase()
+
+	ocon.close
+	set ocon = nothing
+
+end sub
+
+function querydatabase(query)
+
+	dim ors
+
+	set ocom=server.createobject("adodb.command")
+	set ors=server.createobject("adodb.recordset")
+
+	ocom.activeconnection=ocon
+	ocom.commandtext=query
+	set ors=ocom.execute()
+
+	if ors.eof then
+
+		set ocom = nothing
+		set ors = nothing
+
+		set querydatabase = nothing
+
+	else
+
+		set querydatabase = ors
+
+	end if
+
+end function
+
+sub disposequery(recordset)
+
+	if recordset.State=1 then recordset.close
+	set recordset = nothing
+	set ocom = nothing
+
+end sub
+
+function gettransactiondetails(sessionkey)
+
+
+	'ocom.commandtext="sp_gettransactions '" & SQLStr(request.cookies("sessionkey")) & "';"
+
+
+end function
+
+function validateSession(recordset)
+
+	dim ousersession
+
+	if not recordset is nothing then
+
+		if recordset.eof then
+
+			set validateSession = nothing
+
+		else
+
+			set ousersession = new usersession
+
+			ousersession.username = recordset("name")
+			ousersession.accountnumber = recordset("account")
+			ousersession.balance = recordset("balance")
+
+			disposequery(recordset)
+
+			set validateSession = ousersession
+
+		end if
+
+	else
+
+
+		set validateSession = nothing
+
+	end if
+
+end function
+
+class usersession
+
+	public username
+	public accountnumber
+	public balance
+
+end class
+
+%>

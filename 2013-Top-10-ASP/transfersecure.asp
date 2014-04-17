@@ -1,47 +1,5 @@
+<!-- #include file="functions.asp" -->
 <%
-
-function SQLStr(strTemp)
-	'##################################################
-	'##### prevents sql injection and some sql errors #####
-	'##################################################
-
-	if isnull(strTemp) then
-		SQLStr=""
-	else
-		SQLStr=replace(strTemp,"'","''")
-	end if
-end function
-
-function SQLNum(intTemp)
-	'##################################################
-	'##### prevents sql injection and some sql errors #####
-	'##################################################
-
-	if isnull(intTemp) then
-		SQLNum="null"
-	else
-		intTemp=trim(intTemp)
-		if isNumber(intTemp) then
-			SQLNum=intTemp
-		else
-			SQLNum=0
-		end if
-	end if
-end function
-
-function SQLBit(intTemp)
-	'##################################################
-	'##### prevents sql injection and some sql errors #####
-	'##################################################
-
-	if isnull(intTemp) then intTemp=""
-	if not cstr(trim(intTemp))="0" and not lcase(cstr(trim(intTemp)))="false" and not trim(intTemp)="" then
-		SQLBit=1
-	else
-		SQLBit=0
-	end if
-end function
-
 
 dim ocon,ocom,ors
 

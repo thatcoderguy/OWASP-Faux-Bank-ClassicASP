@@ -1,50 +1,71 @@
+<!-- #include file="functions.asp" -->
 <%
 
-dim ocon,ocom,ors
+dim recordset,osession,link
 
-'''login form has been submitted, so try to log in.
+''if user has submitted form
 if request.form("submitted")="1" then
 
-	SET ocon=server.createobject("ADODB.connection")
-	SET ocom=server.createobject("ADODB.command")
-	SET ors=server.createobject("ADODB.recordset")
+''connect to db and try to authenticate
+connecttodatabase()
+set recordset = querydatabase("sp_authenticate " & cstr(sqlnum(request.form("number"))) & ",'" & SQLStr(request.form("password")) & "','';")
 
-	ocon.open GetConnectionString()
-	ocom.activeconnection=ocon
-	ocom.commandtext="sp_authenticate " & SQLNum(request.form("number")) & ",'" & SQLStr(request.form("password")) & "','';"
+if not recordset is nothing then
 
-	SET ors=ocom.execute()
+	if not recordset.eof then
 
-	if not ors.eof then
+		if recordset("sessionkey")="SESSIONKEYINVALID" then
 
-		if ors("sessionkey")="SESSIONKEYINVALID" then
-
-			ors.close
-			ocon.close
+			disposequery(recordset)
+			disconnectfromdatabase()
 
 			''if not logged in
 			response.redirect "/login?error=invalid"
 
+		''authenticated
 		else
 
-			response.cookies("sessionkey")=ors("sessionkey")
+			response.cookies("sessionkey")=recordset("sessionkey")
 
-			ors.close
-			ocon.close
+			disposequery(recordset)
+			disconnectfromdatabase()
 
 			''if logged in
-			response.redirect "/account"
+			response.redirect "/Account"
 
 		end if
 
 	else
 
-		ocon.close
+		disconnectfromdatabase()
 
 		''if not logged in
-		response.redirect "/login?error=invalid"
+		response.redirect "/Login?error=invalid"
 
 	end if
+
+else
+
+	disconnectfromdatabase()
+
+	''if not logged in
+	response.redirect "/Login?error=invalid"
+
+end if
+
+end if
+
+if not request.cookies("sessionkey") is nothing then
+
+if request.cookies("sessionkey")<>"SESSIONKEYINVALID" and request.cookies("sessionkey")<>"" then
+	link="<a href=""/Account"">Account</a>"
+else
+	link="<a href=""/Login"">Login</a>"
+end if
+
+else
+
+link="<a href=""/Login"">Login</a>"
 
 end if
 
@@ -69,13 +90,14 @@ end if
                 </div>
                 <div class="float-right">
                     <section id="login">
+
                     </section>
                     <nav>
                         <ul id="menu">
                             <li><a href="/">Home</a></li>
                             <li><a href="/About">About</a></li>
                             <li><a href="/Contact">Contact</a></li>
-                            <li><a href="/Login">Login</a></li>
+                            <li><%= link %></li>
                         </ul>
                     </nav>
                 </div>
@@ -99,10 +121,7 @@ end if
 			<td>Password:</td><td><input type="password" name="password" value="" />
 			</tr>
 			<tr>
-			<td colspan="2"><input type="submit" name="submit" value="Login" /></td>
-			</tr>
-			<tr>
-			<td colspan="2"><a href="/register">Register New Account</a></td>
+			<td><a href="/register">Create New Account</a></td><td><input style="float: right;" type="submit" name="submit" value="Login" /></td>
 			</tr>
 			</table>
 			</form>
@@ -129,7 +148,7 @@ end if
 
     <li class="two">
         <h5>Open source banking software</h5>
-        The source to this project has been published on GitHub, why contribute and port this project to other languages.
+        The source to this project has been published on GitHub, why not contribute, and port this project to other languages.
         <a href="http://www.github.com/thatcoderguy/faux-bank">Learn more...</a>
     </li>
 
@@ -147,92 +166,5 @@ end if
 
         <script src="/Scripts/jquery-1.8.2.js"></script>
 
-
-
-<!-- Visual Studio Browser Link -->
-<script type="application/json" id="__browserLink_initializationData">
-    {"appName":"InternetExplorer","requestId":"0e0039cd49f84be0bdacc7fcd4e8f746"}
-</script>
-<script type="text/javascript" src="http://localhost:61364/0db510cd2104488a90ce78f1ef33b787/browserLink" async="async"></script>
-<!-- End Browser Link -->
-
 </body>
 </html>
-
-
-<%
-
-
-function SQLStr(strTemp)
-	'##################################################
-	'##### prevents sql injection and some sql errors #####
-	'##################################################
-
-	if isnull(strTemp) then
-		SQLStr=""
-	else
-		SQLStr=replace(strTemp,"'","''")
-	end if
-end function
-
-function SQLNum(intTemp)
-	'##################################################
-	'##### prevents sql injection and some sql errors #####
-	'##################################################
-
-	if isnull(intTemp) then
-		SQLNum="null"
-	else
-		intTemp=trim(intTemp)
-		if isNumber(intTemp) then
-			SQLNum=intTemp
-		else
-			SQLNum=0
-		end if
-	end if
-end function
-
-function SQLBit(intTemp)
-	'##################################################
-	'##### prevents sql injection and some sql errors #####
-	'##################################################
-
-	if isnull(intTemp) then intTemp=""
-	if not cstr(trim(intTemp))="0" and not lcase(cstr(trim(intTemp)))="false" and not trim(intTemp)="" then
-		SQLBit=1
-	else
-		SQLBit=0
-	end if
-end function
-
-function GetConnectionString()
-
-	'##################################################
-	'##### read the web.config file to get the connection string #####
-	'##################################################
-
-dim xmlDoc,xmlappSettings,xmladd
-
-set xmlDoc=server.CreateObject("Microsoft.XMLDOM")
-set xmlappSettings=server.CreateObject("Microsoft.XMLDOM")
-set xmladd=server.CreateObject("Microsoft.XMLDOM")
-
-xmlDoc.async="false"
-xmlDoc.load(server.MapPath("web.config"))
-
-set xmlappSettings = xmldoc.GetElementsByTagName("appSettings").Item(0)
-set xmladd = xmlappSettings.GetElementsByTagName("add")
-
-for each x in xmladd
-
-	'Check for the Atrribute Value
-	if  x.getAttribute("key") ="DefaultConnection" then
-		ReadWebConfig = x.getAttribute("value")
-		exit for
-	end if
-
-next
-
-end function
-
-%>
