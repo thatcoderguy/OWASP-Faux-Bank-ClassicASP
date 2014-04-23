@@ -10,6 +10,8 @@ CREATE TABLE [dbo].[tblAccount](
 	[name] [nvarchar](256) NOT NULL,
 	[email] [nvarchar](256) NOT NULL,
 	[password] [nvarchar](500) NOT NULL,
+	[salt] [nvarchar](50) NOT NULL,
+	[passwordreminder] [nvarchar](4000) NOT NULL,
 	[sessionkey] [nvarchar](50) NULL,
 	[balance] [decimal](18, 5) NOT NULL,
  CONSTRAINT [PK_tblAccount] PRIMARY KEY CLUSTERED 
@@ -44,6 +46,7 @@ GO
 CREATE PROCEDURE sp_registeraccount
 	@strEmail nvarchar(256),
 	@strPassword nvarchar(500),
+	@strPasswordReminder nvarchar(4000),
 	@strName nvarchar(256)
 AS
 BEGIN
@@ -51,11 +54,12 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 
-	INSERT INTO tblAccount(email,password,sessionkey,name)
-	VALUES (@strEmail,@strPassword,NULL,strName)
+	INSERT INTO tblAccount(email,password,sessionkey,name,passwordreminder)
+	VALUES (@strEmail,@strPassword,NULL,@strName,@strPasswordReminder)
 
 	SELECT SCOPE_IDENTITY() as accountnumber
 END
+GO
 
 
 CREATE PROCEDURE sp_authenticate
@@ -135,7 +139,7 @@ BEGIN
 	END
 
 END
-
+GO
 
 CREATE PROCEDURE sp_gettransactions
 	@strSessionKey nvarchar(50)
@@ -157,7 +161,7 @@ SET NOCOUNT OFF;
 	WHERE a2.accountid=@intAccountID OR a1.accountid=@intAccountID
 
 END
-
+GO
 
 CREATE PROCEDURE sp_createtransaction
 	@intToAccountID bigint,
@@ -208,6 +212,6 @@ BEGIN
 		SELECT 'invalidaccount' as message
 
 	END
-	
 
 END
+GO

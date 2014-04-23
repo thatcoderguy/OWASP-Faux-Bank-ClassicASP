@@ -101,7 +101,7 @@ end if
                 <div class="float-right">
                     <section id="login">
                     	<ul>
-                    		<li><a href="/secure/login">Switch to secure mode</a></li>
+                    		<li><a href="/login">Switch to insecure mode</a></li>
                     	</ul>
                     </section>
                     <nav>

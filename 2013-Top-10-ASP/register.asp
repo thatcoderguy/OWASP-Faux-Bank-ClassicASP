@@ -1,24 +1,31 @@
-<!-- #include file="functions.asp" -->
+<!-- #include file="../functions.asp" -->
 <%
+
+	'##################################################
+	'##### account registration page #####
+	'##################################################
 
 	dim recordset,accountnumber,link
 
-	'''login form has been submitted, so try to log in.
+	'''registration form has been submitted.
 	if request.form("submitted")="1" then
 
-		on error resume next
-
 		connecttodatabase()
+
+		''register account
 		set recordset = querydatabase("sp_registeraccount '" & SQLStr(request.form("email")) & "','" & SQLStr(request.form("password")) & "','" & SQLStr(request.form("name")) & "';")
 
 		if not recordset is nothing then
 
+			''recordset was returned
 			if not recordset.eof then
 
+				''get new account number that was created
 				accountnumber = recordset("accountnumber")
 
 				disposequery(recordset)
 
+			''recordset not returned
 			else
 
 				accountnumber="ERROR"
@@ -38,21 +45,6 @@
 		accountnumber=""
 
 	end if
-
-	if not request.cookies("sessionkey") is nothing then
-
-		if request.cookies("sessionkey")<>"SESSIONKEYINVALID" and request.cookies("sessionkey")<>"" then
-			link="<a href=""/Account"">Account</a>"
-		else
-			link="<a href=""/Login"">Login</a>"
-		end if
-
-	else
-
-		link="<a href=""/Login"">Login</a>"
-
-	end if
-
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -74,14 +66,16 @@
                 </div>
                 <div class="float-right">
                     <section id="login">
-
+                    	<ul>
+                    		<li><a href="/secure/register">Switch to secure mode</a></li>
+                    	</ul>
                     </section>
                     <nav>
                         <ul id="menu">
                             <li><a href="/">Home</a></li>
                             <li><a href="/About">About</a></li>
                             <li><a href="/Contact">Contact</a></li>
-                            <li><%= link %></li>
+                            <li><a href="/Login">Login</a></li>
                         </ul>
                     </nav>
                 </div>
@@ -116,6 +110,9 @@
 				</tr>
 				<tr>
 				<td>Password:</td><td><input type="password" name="password" required  value="" />
+				</tr>
+				<tr>
+				<td>Password Reminder:</td><td><input type="text" name="passwordreminder" required  value="" />
 				</tr>
 				<tr>
 				<td colspan="2"><input  style="float: right;" type="submit" name="submit" value="Register" /></td>

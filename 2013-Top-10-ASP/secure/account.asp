@@ -1,4 +1,4 @@
-<!-- #include file="functions.asp" -->
+<!-- #include file="../functions.asp" -->
 <%
 
 	'##################################################
@@ -47,7 +47,7 @@
                 <div class="float-right">
                     <section id="login">
                     	<ul>
-                    		<li><a href="/secure/account">Switch to secure mode</a></li>
+                    		<li><a href="/account">Switch to insecure mode</a></li>
                     	</ul>
                     </section>
                     <nav>

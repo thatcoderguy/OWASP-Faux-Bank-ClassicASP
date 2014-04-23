@@ -1,9 +1,9 @@
 <%
-
-''global vars for database queries
+''global vars for database queries, so 1 connection can be used throughout a page load
 dim ocon,ocom
 
 function SQLStr(strTemp)
+
 	'##################################################
 	'##### prevents sql injection and some sql errors #####
 	'##################################################
@@ -13,9 +13,11 @@ function SQLStr(strTemp)
 	else
 		SQLStr=replace(strTemp,"'","''")
 	end if
+
 end function
 
 function SQLNum(intTemp)
+
 	'##################################################
 	'##### prevents sql injection and some sql errors #####
 	'##################################################
@@ -34,6 +36,7 @@ function SQLNum(intTemp)
 end function
 
 function SQLBit(intTemp)
+
 	'##################################################
 	'##### prevents sql injection and some sql errors #####
 	'##################################################
@@ -44,6 +47,7 @@ function SQLBit(intTemp)
 	else
 		SQLBit=0
 	end if
+
 end function
 
 function GetConnectionString()
@@ -86,6 +90,10 @@ end function
 
 sub connecttodatabase()
 
+	'##################################################
+	'##### connect to the database #####
+	'##################################################
+
 	set ocon=server.createobject("adodb.connection")
 	ocon.open GetConnectionString()
 
@@ -99,6 +107,10 @@ sub disconnectfromdatabase()
 end sub
 
 function querydatabase(query)
+
+	'##################################################
+	'##### return a recordset from the query #####
+	'##################################################
 
 	dim ors
 
@@ -126,21 +138,21 @@ end function
 
 sub disposequery(recordset)
 
+	'##################################################
+	'##### dispose of the recordset returned from the function above #####
+	'##################################################
+
 	if recordset.State=1 then recordset.close
 	set recordset = nothing
 	set ocom = nothing
 
 end sub
 
-function gettransactiondetails(sessionkey)
-
-
-	'ocom.commandtext="sp_gettransactions '" & SQLStr(request.cookies("sessionkey")) & "';"
-
-
-end function
-
 function validateSession(recordset)
+
+	'##################################################
+	'##### validate a user session - ensure the user is still logged in and return a user object #####
+	'##################################################
 
 	dim ousersession
 
@@ -173,6 +185,10 @@ function validateSession(recordset)
 
 end function
 
+
+'##################################################
+'##### user session class #####
+'##################################################
 class usersession
 
 	public username

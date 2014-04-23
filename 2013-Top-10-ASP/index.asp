@@ -1,15 +1,22 @@
 <%
 
+	'##################################################
+	'##### homepage #####
+	'##################################################
+
 	dim link
 
+	''if we have a sessionkey cookie
 	if not request.cookies("sessionkey") is nothing then
 
+		''and the sessionkey is valid, then display an account link instead of login link
 		if request.cookies("sessionkey")<>"SESSIONKEYINVALID" and request.cookies("sessionkey")<>"" then
 			link="<a href=""/Account"">Account</a>"
 		else
 			link="<a href=""/Login"">Login</a>"
 		end if
 
+	''we dont have a sessionkey cookie
 	else
 
 		link="<a href=""/Login"">Login</a>"
@@ -37,6 +44,9 @@
                 </div>
                 <div class="float-right">
                     <section id="login">
+                    	<ul>
+                    		<li><a href="/secure">Switch to secure mode</a></li>
+                    	</ul>
                     </section>
                     <nav>
                         <ul id="menu">

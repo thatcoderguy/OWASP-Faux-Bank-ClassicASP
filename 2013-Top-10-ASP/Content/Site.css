@@ -759,3 +759,12 @@ tr.pager td {
             margin: 0;
         }
 }
+#transactions,
+#transactions td,
+#transactions th {
+	border: 1px solid black;
+}
+#transactions td,
+#transactions th {
+	padding: 10px;
+}

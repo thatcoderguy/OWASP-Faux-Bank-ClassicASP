@@ -42,7 +42,7 @@
                 <div class="float-right">
                     <section id="login">
                     	<ul>
-                    		<li><a href="/secure/about">Switch to secure mode</a></li>
+                    		<li><a href="/about">Switch to insecure mode</a></li>
                     	</ul>
                     </section>
                     <nav>

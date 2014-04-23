@@ -1,83 +1,27 @@
-<!-- #include file="functions.asp" -->
 <%
 
-'##################################################
-'##### account login form #####
-'##################################################
+	'##################################################
+	'##### homepage #####
+	'##################################################
 
-dim recordset,osession,link
+	dim link
 
-''if user has submitted form
-if request.form("submitted")="1" then
+	''if we have a sessionkey cookie
+	if not request.cookies("sessionkey") is nothing then
 
-	''connect to db and try to authenticate
-	connecttodatabase()
-	set recordset = querydatabase("sp_authenticate " & cstr(sqlnum(request.form("number"))) & ",'" & SQLStr(request.form("password")) & "','';")
-
-	if not recordset is nothing then
-
-		''recordset retutned
-		if not recordset.eof then
-
-			''if the username/password was incorrect
-			if recordset("sessionkey")="SESSIONKEYINVALID" then
-
-				disposequery(recordset)
-				disconnectfromdatabase()
-
-				''if not logged in
-				response.redirect "/login?error=invalid"
-
-			''authenticated
-			else
-
-				''store sessionkey in a cookie
-				response.cookies("sessionkey")=recordset("sessionkey")
-
-				disposequery(recordset)
-				disconnectfromdatabase()
-
-				''if logged in
-				response.redirect "/Account"
-
-			end if
-
+		''and the sessionkey is valid, then display an account link instead of login link
+		if request.cookies("sessionkey")<>"SESSIONKEYINVALID" and request.cookies("sessionkey")<>"" then
+			link="<a href=""/Account"">Account</a>"
 		else
-
-			disconnectfromdatabase()
-
-			''if not logged in
-			response.redirect "/Login?error=invalid"
-
+			link="<a href=""/Login"">Login</a>"
 		end if
 
+	''we dont have a sessionkey cookie
 	else
 
-		disconnectfromdatabase()
-
-		''if not logged in
-		response.redirect "/Login?error=invalid"
-
-	end if
-
-end if
-
-''if we have a sessionkey cookie
-if not request.cookies("sessionkey") is nothing then
-
-	''if the sessionkey is valid, display account link instead of login link
-	if request.cookies("sessionkey")<>"SESSIONKEYINVALID" and request.cookies("sessionkey")<>"" then
-		link="<a href=""/Account"">Account</a>"
-	else
 		link="<a href=""/Login"">Login</a>"
+
 	end if
-
-''we dont have a sessionkey cookie
-else
-
-	link="<a href=""/Login"">Login</a>"
-
-end if
 
 %>
 <!DOCTYPE html>
@@ -101,7 +45,7 @@ end if
                 <div class="float-right">
                     <section id="login">
                     	<ul>
-                    		<li><a href="/secure/login">Switch to secure mode</a></li>
+                    		<li><a href="/">Switch to insecure mode</a></li>
                     	</ul>
                     </section>
                     <nav>
@@ -121,29 +65,12 @@ end if
         <div class="content-wrapper">
             <hgroup class="title">
                 <h1>Welcome to Faux Bank.</h1><br />
-                <h2>Log into your account.</h2>
+                <h2>The only bank with all of <a href="https://www.owasp.org/index.php/Top_10_2013-Top_10">oWASP.org's top 10 web vulnerabilities</a>!</h2>
             </hgroup><br />
-			<form action="/login" method="post" id="loginform">
-			<input type="hidden" name="submitted" value="1" />
-			<table>
-			<tr>
-			<td>Account Number:</td><td><input type="text" name="number" value="" />
-			</tr>
-			<tr>
-			<td>Password:</td><td><input type="password" name="password" value="" />
-			</tr>
-			<tr>
-			<td><a href="/register">Create New Account</a></td><td><input style="float: right;" type="submit" name="submit" value="Login" /></td>
-			</tr>
-			</table>
-			</form>
-
-			<% if request.querystring("error")<>"" then %>
-
-			<p><strong>Sorry, but the account number or password was invalid</strong></p>
-
-			<% end if %>
-
+            <p>
+                Open up an account with us today and we'll credit your account with &pound;100!.
+            </p>
+            <p>It only takes seconds to register an account, all we need is your name, email address and password.</p>
         </div>
     </section>
 

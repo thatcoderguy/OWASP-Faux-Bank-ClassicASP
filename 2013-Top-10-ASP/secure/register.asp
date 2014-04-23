@@ -1,84 +1,51 @@
-<!-- #include file="functions.asp" -->
+<!-- #include file="../functions.asp" -->
+<!-- #include file="../md5.asp" -->
 <%
 
-'##################################################
-'##### account login form #####
-'##################################################
+	'##################################################
+	'##### account registration page #####
+	'##################################################
 
-dim recordset,osession,link
+	dim recordset,accountnumber,link
 
-''if user has submitted form
-if request.form("submitted")="1" then
+	'''resgiration form has been submitted.
+	if request.form("submitted")="1" then
 
-	''connect to db and try to authenticate
-	connecttodatabase()
-	set recordset = querydatabase("sp_authenticate " & cstr(sqlnum(request.form("number"))) & ",'" & SQLStr(request.form("password")) & "','';")
+		connecttodatabase()
 
-	if not recordset is nothing then
+		''register account
+		set recordset = querydatabase("sp_registeraccount '" & SQLStr(request.form("email")) & "','" & SQLStr(request.form("password")) & "','" & SQLStr(request.form("name")) & "';")
 
-		''recordset retutned
-		if not recordset.eof then
+		if not recordset is nothing then
 
-			''if the username/password was incorrect
-			if recordset("sessionkey")="SESSIONKEYINVALID" then
+			''recordset was returned
+			if not recordset.eof then
+
+				''get new account number that was created
+				accountnumber = recordset("accountnumber")
 
 				disposequery(recordset)
-				disconnectfromdatabase()
 
-				''if not logged in
-				response.redirect "/login?error=invalid"
-
-			''authenticated
+			''recordset not returned
 			else
 
-				''store sessionkey in a cookie
-				response.cookies("sessionkey")=recordset("sessionkey")
-
-				disposequery(recordset)
-				disconnectfromdatabase()
-
-				''if logged in
-				response.redirect "/Account"
+				accountnumber="ERROR"
 
 			end if
 
 		else
 
-			disconnectfromdatabase()
-
-			''if not logged in
-			response.redirect "/Login?error=invalid"
+			accountnumber="ERROR"
 
 		end if
 
-	else
-
 		disconnectfromdatabase()
 
-		''if not logged in
-		response.redirect "/Login?error=invalid"
-
-	end if
-
-end if
-
-''if we have a sessionkey cookie
-if not request.cookies("sessionkey") is nothing then
-
-	''if the sessionkey is valid, display account link instead of login link
-	if request.cookies("sessionkey")<>"SESSIONKEYINVALID" and request.cookies("sessionkey")<>"" then
-		link="<a href=""/Account"">Account</a>"
 	else
-		link="<a href=""/Login"">Login</a>"
+
+		accountnumber=""
+
 	end if
-
-''we dont have a sessionkey cookie
-else
-
-	link="<a href=""/Login"">Login</a>"
-
-end if
-
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -101,7 +68,7 @@ end if
                 <div class="float-right">
                     <section id="login">
                     	<ul>
-                    		<li><a href="/secure/login">Switch to secure mode</a></li>
+                    		<li><a href="/register">Switch to insecure mode</a></li>
                     	</ul>
                     </section>
                     <nav>
@@ -109,7 +76,7 @@ end if
                             <li><a href="/">Home</a></li>
                             <li><a href="/About">About</a></li>
                             <li><a href="/Contact">Contact</a></li>
-                            <li><%= link %></li>
+                            <li><a href="/Login">Login</a></li>
                         </ul>
                     </nav>
                 </div>
@@ -121,26 +88,35 @@ end if
         <div class="content-wrapper">
             <hgroup class="title">
                 <h1>Welcome to Faux Bank.</h1><br />
-                <h2>Log into your account.</h2>
+                <h2>Create a new account.</h2>
             </hgroup><br />
-			<form action="/login" method="post" id="loginform">
-			<input type="hidden" name="submitted" value="1" />
-			<table>
-			<tr>
-			<td>Account Number:</td><td><input type="text" name="number" value="" />
-			</tr>
-			<tr>
-			<td>Password:</td><td><input type="password" name="password" value="" />
-			</tr>
-			<tr>
-			<td><a href="/register">Create New Account</a></td><td><input style="float: right;" type="submit" name="submit" value="Login" /></td>
-			</tr>
-			</table>
-			</form>
 
-			<% if request.querystring("error")<>"" then %>
+            <% if accountnumber<>"ERROR" AND accountnumber<>"" then %>
 
-			<p><strong>Sorry, but the account number or password was invalid</strong></p>
+				<p>Thank you for creating a new account.<Br />
+				Your new account number is: <strong><%= accountnumber %></strong></p>
+				<p>Please do not lose this number, as you will need it to log into your account</p>
+				<p><a href="/login">Log into your account</a></p>
+
+            <% else %>
+
+				<form action="/register" method="post" id="loginform">
+				<input type="hidden" name="submitted" value="1" />
+				<table>
+				<tr>
+				<td>Name:</td><td><input type="text" name="name" required  value="" />
+				</tr>
+				<tr>
+				<td>Email Address:</td><td><input type="text" name="email" required value="" />
+				</tr>
+				<tr>
+				<td>Password:</td><td><input type="password" name="password" required  value="" />
+				</tr>
+				<tr>
+				<td colspan="2"><input  style="float: right;" type="submit" name="submit" value="Register" /></td>
+				</tr>
+				</table>
+				</form>
 
 			<% end if %>
 
