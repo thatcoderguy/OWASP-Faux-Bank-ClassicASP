@@ -1,24 +1,10 @@
+<!-- #include file="includes/functions.asp" -->
+<!-- #include file="includes/links.asp" -->
 <%
+
 	'##################################################
 	'##### the about page #####
 	'##################################################
-
-	dim link
-
-	''if the user is logged in, then display an account link instead of a login link
-	if not request.cookies("sessionkey") is nothing then
-
-		if request.cookies("sessionkey")<>"SESSIONKEYINVALID" and request.cookies("sessionkey")<>"" then
-			link="<a href=""/Account"">Account</a>"
-		else
-			link="<a href=""/Login"">Login</a>"
-		end if
-
-	else
-
-		link="<a href=""/Login"">Login</a>"
-
-	end if
 
 %>
 <!DOCTYPE html>
@@ -42,7 +28,7 @@
                 <div class="float-right">
                     <section id="login">
                     	<ul>
-                    		<li><a href="/secure/about">Switch to secure mode</a></li>
+                    		<li><%= createsecurelink() %></li>
                     	</ul>
                     </section>
                     <nav>
@@ -50,7 +36,7 @@
                             <li><a href="/">Home</a></li>
                             <li><a href="/About">About</a></li>
                             <li><a href="/Contact">Contact</a></li>
-                            <li><%= link %></li>
+                            <li><%= createaccountlink() %></li>
                         </ul>
                     </nav>
                 </div>
