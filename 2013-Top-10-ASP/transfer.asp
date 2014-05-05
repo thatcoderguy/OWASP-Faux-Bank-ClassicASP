@@ -1,69 +1,31 @@
-<!-- #include file="functions.asp" -->
+<!-- #include file="includes/pagesetup.asp" -->
 <%
 
-	'##################################################
-	'##### transfer page - for a customer to transfer money from one account to another #####
-	'##################################################
+   dim transactioncomplete
+   transactioncomplete=false
 
-	dim ousersession,recordset,link,transactionok
+   if GetMode()="secure" then %>
 
-	transactionok=false
+<!-- #include file="handlers/handletransfer-secure.asp" -->
 
-	''establish global connection to the database
-	connecttodatabase()
+<% else %>
 
-	''validate user session with session token (returns user object with account details)
-	set recordset = querydatabase("sp_authenticate 0,'','" & SQLStr(request.cookies("sessionkey")) & "';")
-	set ousersession = validateSession(recordset)
+<!-- #include file="handlers/handletransfer.asp" -->
 
-	''if a user session was not returned
-	if ousersession is nothing then
-
-		disconnectfromdatabase()
-		response.redirect "/login?error=invalid"
-
+<%
 	end if
 
-	disposequery(recordset)
 
-	''if the transaction for has been submitted
-	if request.form("submitted")="1" then
+	'##################################################
+	'##### if there isnt a user session then redirect to the login page #####
+	'##################################################
+	if GetSessionKey()="" or ousersession is nothing then
 
-		''try to create a transaction
-		set recordset = querydatabase("sp_createtransaction " & SqlNum(request.form("accountto")) & "," & SqlNum(request.form("amount"))& ",'" & SQLStr(request.cookies("sessionkey")) & "';")
-
-		''no recordsets returned
-		if recordset.eof then
-
-			discountfromdatabase()
-			response.redirect "transfer.asp?error=invalidaccount"
-
-		else
-
-			''transaction failed when checking for a valid account
-			if recordset("message")="invalidaccount" then
-
-				disposequery(recordset)
-				disconnectfromdatabase()
-
-				response.redirect "/Transfer?error=invalidaccount"
-
-			''transaction succeeded
-			else
-
-				transactionok=true
-				disposequery(recordset)
-
-			end if
-
-		end if
-
-		disconnectfromdatabase()
+		response.redirect "/login?error=notloggedin"
 
 	end if
 
 %>
-
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -85,7 +47,7 @@
                 <div class="float-right">
                     <section id="login">
                     	<ul>
-                    		<li><a href="/secure/transfer">Switch to secure mode</a></li>
+                    		<li><% displaysecurelink() %></li>
                     	</ul>
                     </section>
                     <nav>
@@ -93,7 +55,7 @@
                             <li><a href="/">Home</a></li>
                             <li><a href="/About">About</a></li>
                             <li><a href="/Contact">Contact</a></li>
-                            <li><a href="/Account">Account</a></li>
+                            <li><% displayaccountlink() %></li>
                         </ul>
                     </nav>
                 </div>
@@ -109,45 +71,17 @@
 
             </hgroup><br />
 
-				<%
-					''if the transaction succeeded, then display the succeeded message.
-					if transactionok then
-				%>
+            	<% if GetMode()="secure" then %>
 
-					<p>Thank you</p>
-					<p>Your transfer of &pound;<%= request.form("amount") %> to account <%= request.form("accountto") %> <br />has been completed</p>
+				<!-- #include file="pagecontent/transferform-secure.asp" -->
 
-					<p><a href="/Account">Back to my account</p>
+				<% else %>
 
-				<%
-					''otherwise display the form again with a failed message
-					else
-				%>
+				<!-- #include file="pagecontent/transferform.asp" -->
 
-					<form action="/Transfer" method="post" id="transferform">
-					<input type="hidden" name="submitted" value="1" />
-					<table>
-					<tr>
-					<td>Transfer to Account:</td><td><input type="text" name="accountto" value="" />
-					</tr>
-					<tr>
-					<td>Amount:</td><td>&pound;<input type="text" name="amount" value="0" /></td>
-					</tr>
-					<tr>
-					<td colspan="2"><input style="float: right;" type="submit" name="submit" value="Transfer" /></td>
-					</tr>
-					</table>
-					</form>
+				<% end if
 
-				<%
-					end if
-					if request.querystring("error")<>"" then
-				%>
-
-					<p><strong>Sorry, but the account number was invalid</strong></p>
-
-				<%
-					end if
+				   DisplayTransferError()
 				%>
 
         </div>

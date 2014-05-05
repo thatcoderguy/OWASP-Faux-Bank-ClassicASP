@@ -95,7 +95,7 @@ BEGIN
 				END
 				SET @strSessionKey='n'+@strSessionKey+'n'
 			
-				SELECT @userID2=MIN(accountid) FROM tblAccount WHERE CAST(@sessionkey AS varbinary(50))=CAST(@strSessionKey AS varbinary(50))
+				SELECT @userID2=MIN(accountid) FROM tblAccount WHERE CAST(sessionkey AS varbinary(50))=CAST(@strSessionKey AS varbinary(50))
 			END
 
 			UPDATE tblAccount 
@@ -106,12 +106,16 @@ BEGIN
 
 			SET NOCOUNT OFF;
 			
+			SELECT 0 as errorCode,'' as errorMessage
+			
 			SELECT @strSessionKey as sessionkey,@intAccountNumber as account,@intbalance as balance,@strName as name
 
 		END ELSE BEGIN
-
-			SELECT 'SESSIONKEYINVALID' as sessionkey
-
+		
+			SET NOCOUNT OFF;
+		
+			SELECT 1 as errorCode,'Invalid Session Key' as errorMessage
+			
 		END
 
 	END ELSE IF @strSessionKey<>'' AND (@intAccountNumber=0 OR  @intAccountNumber IS NULL) AND @strPassword='' BEGIN
@@ -123,19 +127,25 @@ BEGIN
 			SELECT @intbalance=balance,@strName=name FROM tblAccount WHERE accountid=@intAccountNumber
 
 			SET NOCOUNT OFF;
+			
+			SELECT 0 as errorCode,'' as errorMessage
 
 			SELECT @strSessionKey as sessionkey,@intAccountNumber as account,@intbalance as balance,@strName as name
 
 		END ELSE BEGIN
 
-			SELECT 'SESSIONKEYINVALID' as sessionkey
-
+			SET NOCOUNT OFF;
+		
+			SELECT 1 as errorCode,'Invalid Session Key' as errorMessage
+			
 		END
 
 
 	END ELSE BEGIN
 
-		SELECT 'SESSIONKEYINVALID' as sessionkey
+		SET NOCOUNT OFF;
+	
+		SELECT 1 as errorCode,'Invalid Session Key' as errorMessage
 
 	END
 

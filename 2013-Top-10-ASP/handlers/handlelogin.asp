@@ -16,8 +16,9 @@ if request.form("submitted")="1" then
 		''recordset returned
 		if not recordset.eof then
 
-			''if the username/password was incorrect
-			if recordset("sessionkey")="SESSIONKEYINVALID" then
+			''the first recordset contains the error code and error message
+			''0=ok, 1=error
+			if recordset("errorCode")<>"0" then
 
 				recordset.close
 				set recordset = nothing
@@ -27,6 +28,9 @@ if request.form("submitted")="1" then
 
 			''authenticated
 			else
+
+				''move to the next record set
+				set recordset = recordset.nextrecordset
 
 				''store sessionkey in a cookie
 				response.cookies("sessionkey")=recordset("sessionkey")

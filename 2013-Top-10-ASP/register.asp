@@ -1,50 +1,16 @@
-<!-- #include file="../functions.asp" -->
+<!-- #include file="includes/pagesetup.asp" -->
+<!-- #include file="handlers/handleregister.asp" -->
 <%
 
 	'##################################################
-	'##### account registration page #####
+	'##### if there is already a user session then redirect to the account page #####
 	'##################################################
+	if GetSessionKey()<>"" then
 
-	dim recordset,accountnumber,link
-
-	'''registration form has been submitted.
-	if request.form("submitted")="1" then
-
-		connecttodatabase()
-
-		''register account
-		set recordset = querydatabase("sp_registeraccount '" & SQLStr(request.form("email")) & "','" & SQLStr(request.form("password")) & "','" & SQLStr(request.form("name")) & "';")
-
-		if not recordset is nothing then
-
-			''recordset was returned
-			if not recordset.eof then
-
-				''get new account number that was created
-				accountnumber = recordset("accountnumber")
-
-				disposequery(recordset)
-
-			''recordset not returned
-			else
-
-				accountnumber="ERROR"
-
-			end if
-
-		else
-
-			accountnumber="ERROR"
-
-		end if
-
-		disconnectfromdatabase()
-
-	else
-
-		accountnumber=""
+		response.redirect "/account"
 
 	end if
+
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -67,7 +33,7 @@
                 <div class="float-right">
                     <section id="login">
                     	<ul>
-                    		<li><a href="/secure/register">Switch to secure mode</a></li>
+                    		<li><% displaysecurelink() %></li>
                     	</ul>
                     </section>
                     <nav>
@@ -75,7 +41,7 @@
                             <li><a href="/">Home</a></li>
                             <li><a href="/About">About</a></li>
                             <li><a href="/Contact">Contact</a></li>
-                            <li><a href="/Login">Login</a></li>
+                            <li><% displayaccountlink() %></li>
                         </ul>
                     </nav>
                 </div>
@@ -90,37 +56,7 @@
                 <h2>Create a new account.</h2>
             </hgroup><br />
 
-            <% if accountnumber<>"ERROR" AND accountnumber<>"" then %>
-
-				<p>Thank you for creating a new account.<Br />
-				Your new account number is: <strong><%= accountnumber %></strong></p>
-				<p>Please do not lose this number, as you will need it to log into your account</p>
-				<p><a href="/login">Log into your account</a></p>
-
-            <% else %>
-
-				<form action="/register" method="post" id="loginform">
-				<input type="hidden" name="submitted" value="1" />
-				<table>
-				<tr>
-				<td>Name:</td><td><input type="text" name="name" required  value="" />
-				</tr>
-				<tr>
-				<td>Email Address:</td><td><input type="text" name="email" required value="" />
-				</tr>
-				<tr>
-				<td>Password:</td><td><input type="password" name="password" required  value="" />
-				</tr>
-				<tr>
-				<td>Password Reminder:</td><td><input type="text" name="passwordreminder" required  value="" />
-				</tr>
-				<tr>
-				<td colspan="2"><input  style="float: right;" type="submit" name="submit" value="Register" /></td>
-				</tr>
-				</table>
-				</form>
-
-			<% end if %>
+            <!-- #include file="pagecontent/registrationform.asp" -->
 
         </div>
     </section>

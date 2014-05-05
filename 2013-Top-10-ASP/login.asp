@@ -1,7 +1,4 @@
-<!-- #include file="includes/functions.asp" -->
-<!-- #include file="includes/databasesetup.asp" -->
-<!-- #include file="includes/usersession.asp" -->
-<!-- #include file="includes/links.asp" -->
+<!-- #include file="includes/pagesetup.asp" -->
 <!-- #include file="handlers/handlelogin.asp" -->
 <%
 
@@ -36,7 +33,7 @@
                 <div class="float-right">
                     <section id="login">
                     	<ul>
-                    		<li><%= createsecurelink() %></li>
+                    		<li><% displaysecurelink() %></li>
                     	</ul>
                     </section>
                     <nav>
@@ -44,7 +41,7 @@
                             <li><a href="/">Home</a></li>
                             <li><a href="/About">About</a></li>
                             <li><a href="/Contact">Contact</a></li>
-                            <li><%= createaccountlink() %></li>
+                            <li><% displayaccountlink() %></li>
                         </ul>
                     </nav>
                 </div>
@@ -73,11 +70,7 @@
 			</table>
 			</form>
 
-			<% if request.querystring("error")<>"" then %>
-
-			<p><strong>Sorry, but the account number or password was invalid</strong></p>
-
-			<% end if %>
+			<% DisplayLoginError() %>
 
         </div>
     </section>
@@ -115,4 +108,4 @@
 
 </body>
 </html>
-<!-- #include file="includes/cleanup.asp" -->
+<!-- #include file="includes/pageend.asp" -->

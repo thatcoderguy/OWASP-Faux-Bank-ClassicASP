@@ -142,4 +142,10 @@ function GetSessionKey()
 
 end function
 
+sub clearSessionCookie
+
+	response.cookies("sessionkey")=""
+
+end sub
+
 %>

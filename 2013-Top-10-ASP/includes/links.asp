@@ -1,6 +1,6 @@
 <%
 
-function createaccountlink()
+sub displayaccountlink()
 
 	'##################################################
 	'##### create the login/account link #####
@@ -8,17 +8,17 @@ function createaccountlink()
 
 	if GetSessionKey()<>"" then
 
-		createaccountlink="<a href=""/Account"">Account</a>"
+		response.write "<a href=""/Account"">Account</a>"
 
 	else
 
-		createaccountlink="<a href=""/Login"">Login</a>"
+		response.write "<a href=""/Login"">Login</a>"
 
 	end if
 
-end function
+end sub
 
-function createsecurelink()
+sub displaysecurelink()
 
 	'##################################################
 	'##### create the security mode link #####
@@ -26,14 +26,14 @@ function createsecurelink()
 
 	if GetMode()="normal" then
 
-		createsecurelink="<a href=""?setmode=secure"">Switch to secure mode</a>"
+		response.write "<a href=""?setmode=secure"">Switch to secure mode</a>"
 
 	else
 
-		createsecurelink="<a href=""?setmode=normal"">Switch to normal mode</a>"
+		response.write "<a href=""?setmode=normal"">Switch to normal mode</a>"
 
 	end if
 
-end function
+end sub
 
 %>

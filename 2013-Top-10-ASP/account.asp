@@ -1,7 +1,16 @@
-<!-- #include file="includes/functions.asp" -->
-<!-- #include file="includes/databasesetup.asp" -->
-<!-- #include file="includes/usersession.asp" -->
-<!-- #include file="includes/links.asp" -->
+<!-- #include file="includes/pagesetup.asp" -->
+<%
+
+	'##################################################
+	'##### if there isnt a user session then redirect to the login page #####
+	'##################################################
+	if GetSessionKey()="" or ousersession is nothing then
+
+		response.redirect "/login?error=notloggedin"
+
+	end if
+
+%>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -23,7 +32,7 @@
                 <div class="float-right">
                     <section id="login">
                     	<ul>
-                    		<li><%= createsecurelink() %></li>
+                    		<li><% displaysecurelink() %></li>
                     	</ul>
                     </section>
                     <nav>
@@ -31,7 +40,7 @@
                             <li><a href="/">Home</a></li>
                             <li><a href="/About">About</a></li>
                             <li><a href="/Contact">Contact</a></li>
-                            <li><%= createaccountlink() %></li>
+                            <li><% displayaccountlink() %></li>
                         </ul>
                     </nav>
                 </div>
@@ -54,7 +63,7 @@
 					<th>Transaction Ref</th><th>Account From</th><th>Account To</th><th>Amount</th>
 					</tr>
 
-					<!-- #include file="includes/transactions.asp" -->
+					<!-- #include file="pagecontent/accounttransactions.asp" -->
 
 					</table>
 

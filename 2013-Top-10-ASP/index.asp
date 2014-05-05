@@ -29,7 +29,7 @@
                 <div class="float-right">
                     <section id="login">
                     	<ul>
-                    		<li><%= createsecurelink() %></li>
+                    		<li><% displaysecurelink() %></li>
                     	</ul>
                     </section>
                     <nav>
@@ -37,7 +37,7 @@
                             <li><a href="/">Home</a></li>
                             <li><a href="/About">About</a></li>
                             <li><a href="/Contact">Contact</a></li>
-                            <li><%= createaccountlink() %></li>
+                            <li><% displayaccountlink() %></li>
                         </ul>
                     </nav>
                 </div>
