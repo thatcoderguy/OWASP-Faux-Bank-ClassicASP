@@ -2,21 +2,17 @@
 <!-- #include file="includes/databasesetup.asp" -->
 <!-- #include file="includes/usersession.asp" -->
 <!-- #include file="includes/links.asp" -->
-<%
-	if getmode()="normal" then
-%>
 <!-- #include file="handlers/handlelogin.asp" -->
 <%
-	else
-%>
-<!-- #include file="handlers/handlelogin-secure.asp" -->
-<%
+
+	'##################################################
+	'##### if there is already a user session then redirect to the account page #####
+	'##################################################
+	if GetSessionKey()<>"" then
+
+		response.redirect "/account"
+
 	end if
-
-'##################################################
-'##### account login form #####
-'##################################################
-
 
 %>
 <!DOCTYPE html>

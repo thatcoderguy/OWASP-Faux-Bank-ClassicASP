@@ -1,31 +1,7 @@
-<!-- #include file="functions.asp" -->
-<%
-
-	'##################################################
-	'##### account page - displays transactions for the account logged into #####
-	'##################################################
-
-	dim ousersession,recordset
-
-	connecttodatabase()
-
-	''validate user session with session token (returns user object with account details)
-	set recordset = querydatabase("sp_authenticate 0,'','" & SQLStr(request.cookies("sessionkey")) & "';")
-	set ousersession = validateSession(recordset)
-
-	if ousersession is nothing then
-
-		disconnectfromdatabase()
-		response.redirect "/login?error=invalid"
-
-	end if
-
-	disposequery(recordset)
-
-	''retrieve account's transactions - gets used further down
-	set recordset = querydatabase("sp_gettransactions '" & SQLStr(request.cookies("sessionkey")) & "';")
-
-%>
+<!-- #include file="includes/functions.asp" -->
+<!-- #include file="includes/databasesetup.asp" -->
+<!-- #include file="includes/usersession.asp" -->
+<!-- #include file="includes/links.asp" -->
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -47,7 +23,7 @@
                 <div class="float-right">
                     <section id="login">
                     	<ul>
-                    		<li><a href="/secure/account">Switch to secure mode</a></li>
+                    		<li><%= createsecurelink() %></li>
                     	</ul>
                     </section>
                     <nav>
@@ -55,7 +31,7 @@
                             <li><a href="/">Home</a></li>
                             <li><a href="/About">About</a></li>
                             <li><a href="/Contact">Contact</a></li>
-							<li><a href="/Account">Account</a></li>
+                            <li><%= createaccountlink() %></li>
                         </ul>
                     </nav>
                 </div>
@@ -78,31 +54,8 @@
 					<th>Transaction Ref</th><th>Account From</th><th>Account To</th><th>Amount</th>
 					</tr>
 
-					<%
+					<!-- #include file="includes/transactions.asp" -->
 
-						'''print out account's transactions
-						if recordset.eof then
-
-							response.write "<tr><td colspan=""4"">-- No Transactions--</td></tr>"
-
-							disconnectfromdatabase()
-
-						else
-
-							while not recordset.eof
-
-								response.write "<tr><td>" & recordset("transactionid") & "</td><td>" & recordset("fromname") & " (" & recordset("fromaccount") & ")</td><td>" & recordset("toname") & " (" & recordset("toaccount") & ")</td><td>&pound;" & recordset("amount") &"</tr>"
-
-								recordset.movenext
-
-							wend
-
-							disposequery(recordset)
-							disconnectfromdatabase()
-
-						end if
-
-					%>
 					</table>
 
 			</div>

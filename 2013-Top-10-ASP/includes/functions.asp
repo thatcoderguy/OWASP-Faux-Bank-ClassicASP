@@ -48,35 +48,6 @@ function SQLBit(intTemp)
 
 end function
 
-function getmode()
-
-	'##################################################
-	'##### return if the site is in security mode or not #####
-	'##################################################
-
-	''if we have a security mode cookie
-	if not request.cookies("securitymode") is nothing then
-
-		''and the security mode is valid, then return the current mode
-		if request.cookies("securitymode")="normal" or request.cookies("securitymode")="" then
-
-			getmode="normal"
-
-		else
-
-			getmode="secure"
-
-		end if
-
-	else
-
-		getmode="normal"
-
-	end if
-
-end function
-
-
 function GetConnectionString()
 
 	'##################################################
@@ -112,6 +83,62 @@ function GetConnectionString()
 	set xmlappSettings=nothing
 	set xmlDoc=nothing
 
+
+end function
+
+function GetMode()
+
+	'##################################################
+	'##### return if the site is in security mode or not #####
+	'##################################################
+
+	''if we have a security mode cookie
+	if not request.cookies("securitymode") is nothing then
+
+		''and the security mode is valid, then return the current mode
+		if request.cookies("securitymode")="normal" or request.cookies("securitymode")="" then
+
+			getmode="normal"
+
+		else
+
+			getmode="secure"
+
+		end if
+
+	else
+
+		getmode="normal"
+
+	end if
+
+end function
+
+function GetSessionKey()
+
+	'##################################################
+	'##### return the session key (if there is one) #####
+	'##################################################
+
+	''if we have a sessionkey cookie
+	if not request.cookies("sessionkey") is nothing then
+
+		''and the sessionkey is valid, then display an account link instead of login link
+		if request.cookies("sessionkey")<>"SESSIONKEYINVALID" and request.cookies("sessionkey")<>"" then
+
+			GetSessionKey=request.cookies("sessionkey")
+
+		else
+
+			GetSessionKey=""
+
+		end if
+
+	else
+
+		GetSessionKey=""
+
+	end if
 
 end function
 

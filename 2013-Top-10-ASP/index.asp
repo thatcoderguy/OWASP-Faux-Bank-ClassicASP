@@ -1,3 +1,4 @@
+<!-- #include file="handlers/securitymode.asp" -->
 <!-- #include file="includes/functions.asp" -->
 <!-- #include file="includes/links.asp" -->
 <%

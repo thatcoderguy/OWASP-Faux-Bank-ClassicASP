@@ -1,41 +1,39 @@
 <%
 
-dim osession
+dim ousersession
 
-function validateSession(recordset)
+function validateSession()
+
+	dim ouser,recordset
+
+	ocom.commandtext = "sp_authenticate 0,'','" & GetSessionKey() & "';"
+	set recordset = ocom.execute()
 
 	'##################################################
 	'##### validate a user session - ensure the user is still logged in and return a user object #####
 	'##################################################
 
-	dim ousersession
+	if recordset.eof then
 
-	if not recordset is nothing then
-
-		if recordset.eof then
-
-			set validateSession = nothing
-
-		else
-
-			set ousersession = new usersession
-
-			ousersession.username = recordset("name")
-			ousersession.accountnumber = recordset("account")
-			ousersession.balance = recordset("balance")
-
-			disposequery(recordset)
-
-			set validateSession = ousersession
-
-		end if
+		set recordset = nothing
+		set validateSession = nothing
 
 	else
 
+		set ouser = new usersession
 
-		set validateSession = nothing
+		''create a user object and populate with userful user information
+		ouser.username = recordset("name")
+		ouser.accountnumber = recordset("account")
+		ouser.balance = recordset("balance")
+
+		recordset.close
+		set recordset = nothing
+
+		set validateSession = ouser
 
 	end if
+
 
 end function
 
@@ -50,5 +48,11 @@ class usersession
 	public balance
 
 end class
+
+'##################################################
+'##### if we have a session cookie, then validate the user #####
+'##################################################
+
+if GetSessionKey()<>"" then set ousersession = validateSession()
 
 %>

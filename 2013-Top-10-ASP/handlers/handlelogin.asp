@@ -1,23 +1,26 @@
+<%
 
-dim recordset,osession,link
+'##################################################
+'##### account login handler - executes after the login form has been submitted #####
+'#################################################
 
-''if user has submitted form
 if request.form("submitted")="1" then
 
-	''connect to db and try to authenticate
-	connecttodatabase()
-	set recordset = querydatabase("sp_authenticate " & cstr(sqlnum(request.form("number"))) & ",'" & SQLStr(request.form("password")) & "','';")
+	dim recordset
+
+	ocom.commandtext = "sp_authenticate " & cstr(sqlnum(request.form("number"))) & ",'" & SQLStr(request.form("password")) & "','';"
+	set recordset = ocom.execute()
 
 	if not recordset is nothing then
 
-		''recordset retutned
+		''recordset returned
 		if not recordset.eof then
 
 			''if the username/password was incorrect
 			if recordset("sessionkey")="SESSIONKEYINVALID" then
 
-				disposequery(recordset)
-				disconnectfromdatabase()
+				recordset.close
+				set recordset = nothing
 
 				''if not logged in
 				response.redirect "/login?error=invalid"
@@ -28,8 +31,8 @@ if request.form("submitted")="1" then
 				''store sessionkey in a cookie
 				response.cookies("sessionkey")=recordset("sessionkey")
 
-				disposequery(recordset)
-				disconnectfromdatabase()
+				recordset.close
+				set recordset = nothing
 
 				''if logged in
 				response.redirect "/Account"
@@ -38,7 +41,7 @@ if request.form("submitted")="1" then
 
 		else
 
-			disconnectfromdatabase()
+			set recordset = nothing
 
 			''if not logged in
 			response.redirect "/Login?error=invalid"
@@ -47,7 +50,7 @@ if request.form("submitted")="1" then
 
 	else
 
-		disconnectfromdatabase()
+		set recordset = nothing
 
 		''if not logged in
 		response.redirect "/Login?error=invalid"
@@ -56,19 +59,4 @@ if request.form("submitted")="1" then
 
 end if
 
-''if we have a sessionkey cookie
-if not request.cookies("sessionkey") is nothing then
-
-	''if the sessionkey is valid, display account link instead of login link
-	if request.cookies("sessionkey")<>"SESSIONKEYINVALID" and request.cookies("sessionkey")<>"" then
-		link="<a href=""/Account"">Account</a>"
-	else
-		link="<a href=""/Login"">Login</a>"
-	end if
-
-''we dont have a sessionkey cookie
-else
-
-	link="<a href=""/Login"">Login</a>"
-
-end if
+%>
