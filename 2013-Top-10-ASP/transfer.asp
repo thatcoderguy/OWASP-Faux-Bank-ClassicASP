@@ -1,20 +1,6 @@
 <!-- #include file="includes/pagesetup.asp" -->
-<%
-
-   dim transactioncomplete
-   transactioncomplete=false
-
-   if GetMode()="secure" then %>
-
-<!-- #include file="handlers/handletransfer-secure.asp" -->
-
-<% else %>
-
 <!-- #include file="handlers/handletransfer.asp" -->
-
 <%
-	end if
-
 
 	'##################################################
 	'##### if there isnt a user session then redirect to the login page #####
@@ -71,16 +57,10 @@
 
             </hgroup><br />
 
-            	<% if GetMode()="secure" then %>
-
-				<!-- #include file="pagecontent/transferform-secure.asp" -->
-
-				<% else %>
-
+				<!-- #include file="pagecontent/transfercomplete.asp" -->
 				<!-- #include file="pagecontent/transferform.asp" -->
 
-				<% end if
-
+				<%
 				   DisplayTransferError()
 				%>
 

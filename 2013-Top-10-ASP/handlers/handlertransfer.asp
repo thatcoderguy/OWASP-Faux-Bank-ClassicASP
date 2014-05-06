@@ -1,9 +1,5 @@
 <%
 
-'##################################################
-'##### account registration handler - executes after the registration form has been submitted #####
-'#################################################
-
 ''if the transaction for has been submitted
 if request.form("submitted")="1" then
 
@@ -15,6 +11,8 @@ if request.form("submitted")="1" then
 	''no recordsets returned
 	if recordset.eof then
 
+		set recordset = nothing
+
 		response.redirect "/Transfer?error=invalidaccount"
 
 	else
@@ -22,10 +20,15 @@ if request.form("submitted")="1" then
 		''transaction failed when checking for a valid account
 		if recordset("message")="invalidaccount" then
 
+			set recordset = nothing
+
 			response.redirect "/Transfer?error=invalidaccount"
 
 		''transaction succeeded
 		else
+
+			recordset.close
+			set recordset = nothing
 
 			transactioncomplete=true
 

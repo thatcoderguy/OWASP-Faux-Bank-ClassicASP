@@ -8,33 +8,46 @@ dim accountnumber
 
 if request.form("submitted")="1" then
 
+
 	dim recordset
 
-	ocom.commandtext = "sp_registeraccount '" & SQLStr(request.form("email")) & "','" & SQLStr(request.form("password")) & "','" & SQLStr(request.form("name")) & "','" & SQLStr(request.form("passwordreminder")) & "';"
-	set recordset = ocom.execute()
+	'##################################################
+	'##### if the site is in secure mode, then handle registrations this way #####
+	'##################################################
+	if GetMode()="secure" then
 
-	if not recordset is nothing then
+	'##################################################
+	'##### if the site is in normal mode, then handle registrations this way #####
+	'##################################################
+	else
 
-		''recordset was returned
-		if not recordset.eof then
+		ocom.commandtext = "sp_registeraccount '" & SQLStr(request.form("email")) & "','" & SQLStr(request.form("password")) & "','" & SQLStr(request.form("name")) & "','" & SQLStr(request.form("passwordreminder")) & "';"
+		set recordset = ocom.execute()
 
-			''get new account number that was created
-			accountnumber = recordset("accountnumber")
+		if not recordset is nothing then
 
-			recordset.close
-			set recordset = nothing
+			''recordset was returned
+			if not recordset.eof then
 
-		''recordset not returned
+				''get new account number that was created
+				accountnumber = recordset("accountnumber")
+
+				recordset.close
+				set recordset = nothing
+
+			''recordset not returned
+			else
+
+				accountnumber=""
+				set recordset = nothing
+
+			end if
+
 		else
 
 			accountnumber=""
-			set recordset = nothing
 
 		end if
-
-	else
-
-		accountnumber=""
 
 	end if
 

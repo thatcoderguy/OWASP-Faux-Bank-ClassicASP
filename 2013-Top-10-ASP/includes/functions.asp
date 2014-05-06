@@ -142,10 +142,40 @@ function GetSessionKey()
 
 end function
 
-sub clearSessionCookie
+sub clearSessionCookie()
+
+	'##################################################
+	'##### clear session cookie (e.g. logout) #####
+	'##################################################
 
 	response.cookies("sessionkey")=""
 
 end sub
+
+function GenerateToken()
+
+	'##################################################
+	'##### generate a 10 char random token (for authenticating forms) #####
+	'##################################################
+
+	Randomize
+
+	dim token, i, usablechars
+
+	''create a list of usable chars, as A-Z and a-z and 0-9 arent grouped together in ASCII
+	usablechars="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+
+	token=""
+
+	''create a string of 10 random chars
+	for i=0 to 10
+
+		token = token & chr(Int((Rnd * 62) + 1))
+
+	next
+
+	GenerateToken=token
+
+end function
 
 %>

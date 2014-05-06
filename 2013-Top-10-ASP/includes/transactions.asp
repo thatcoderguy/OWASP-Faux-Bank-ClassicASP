@@ -27,13 +27,12 @@
 	end if
 
 
+
 	ocom.commandtext = "sp_gettransactions '" & GetSessionKey() & "'," & cstr(pagenumber) & ";"
 	set recordset = ocom.execute()
 
 	'''print out account's transactions
 	if recordset.eof then
-
-		set recordset = nothing
 
 		response.write "<tr><td colspan=""4"">-- No Transactions--</td></tr>"
 
@@ -46,9 +45,6 @@
 			recordset.movenext
 
 		wend
-
-		recordset.close
-		set recordset = nothing
 
 	end if
 
