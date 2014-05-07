@@ -9,7 +9,7 @@ CREATE TABLE [dbo].[tblAccount](
 	[accountid] [bigint] IDENTITY(34534454536,1) NOT NULL,
 	[name] [nvarchar](256) NOT NULL,
 	[email] [nvarchar](256) NOT NULL,
-	[passwordhash] [nvarchar](500) NOT NULL,
+	[passwordhash] [nvarchar](128) NOT NULL,
 	[securepasswordhash] [nvarchar](500) NOT NULL,
 	[salt] [nvarchar](50) NOT NULL,
 	[passwordreminder] [nvarchar](4000) NOT NULL,
@@ -46,9 +46,9 @@ GO
 
 CREATE PROCEDURE sp_registeraccount
 	@strEmail nvarchar(256),
-	@strPassword nvarchar(500),
-	@strPasswordReminder nvarchar(4000),
-	@strName nvarchar(256)
+	@strPassword nvarchar(128),
+	@strName nvarchar(256),
+	@strPasswordReminder nvarchar(4000)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
