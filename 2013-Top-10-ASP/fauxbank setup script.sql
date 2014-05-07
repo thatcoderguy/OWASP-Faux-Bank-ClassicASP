@@ -1,4 +1,4 @@
-USE [CSRF]
+USE [FauxBank]
 GO
 /****** Object:  Table [dbo].[tblAccount]    Script Date: 16/04/2014 12:09:18 ******/
 SET ANSI_NULLS ON
