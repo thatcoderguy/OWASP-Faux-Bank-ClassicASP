@@ -6,7 +6,12 @@
 <!-- #include file="errormessages.asp" -->
 <%
 
-dim ousersession
+dim ousersession, globalsalt
+
+'##################################################
+'##### global password salt - use by login and register #####
+'##################################################
+globalsalt = "lIcqreAN2ESpWUtVMrZfp"
 
 '##################################################
 '##### if we have a session cookie, then validate the user #####

@@ -1,3 +1,4 @@
+<!-- #include virtual="/includes/sha512.asp" -->
 <%
 
 '##################################################
@@ -8,7 +9,10 @@ if request.form("submitted")="1" then
 
 	dim recordset
 
-	ocom.commandtext = "sp_authenticate " & cstr(sqlnum(request.form("number"))) & ",'" & SQLStr(request.form("password")) & "','';"
+	''create a SHA512 hash of the password (include the salt)
+	passwordhash = HashString(request.form("password") & globalsalt)
+
+	ocom.commandtext = "sp_authenticate " & cstr(sqlnum(request.form("number"))) & ",'" & SQLStr(passwordhash) & "','';"
 	set recordset = ocom.execute()
 
 	if not recordset is nothing then

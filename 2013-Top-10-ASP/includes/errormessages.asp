@@ -13,9 +13,13 @@ end sub
 
 sub DisplayTransferError()
 
-	if request.querystring("error")<>"" then
+	if request.querystring("error")="invalidaccount" then
 
 			response.write "<p><strong>Sorry, but the account number was invalid</strong></p>"
+
+	elseif request.querystring("error")="invalidtoken" then
+
+			response.write "<p><strong>Sorry, but the token submitted is invalid</strong></p>"
 
 	end if
 

@@ -1,3 +1,4 @@
+<!-- #include virtual="/includes/sha512.asp" -->
 <%
 
 '##################################################
@@ -9,19 +10,22 @@ dim accountnumber
 if request.form("submitted")="1" then
 
 
-	dim recordset
+	dim recordset, passwordhash
 
 	'##################################################
 	'##### if the site is in secure mode, then handle registrations this way #####
 	'##################################################
-	if GetMode()="secure" then
+	'if GetMode()="secure" then
 
 	'##################################################
 	'##### if the site is in normal mode, then handle registrations this way #####
 	'##################################################
-	else
+	'else
 
-		ocom.commandtext = "sp_registeraccount '" & SQLStr(request.form("email")) & "','" & SQLStr(request.form("password")) & "','" & SQLStr(request.form("name")) & "','" & SQLStr(request.form("passwordreminder")) & "';"
+		''create a SHA512 hash of the password (include the salt)
+		passwordhash = HashString(request.form("password") & globalsalt)
+
+		ocom.commandtext = "sp_registeraccount '" & SQLStr(request.form("email")) & "','" & SQLStr(passwordhash) & "','" & SQLStr(request.form("name")) & "','" & SQLStr(request.form("passwordreminder")) & "';"
 		set recordset = ocom.execute()
 
 		if not recordset is nothing then
@@ -49,7 +53,7 @@ if request.form("submitted")="1" then
 
 		end if
 
-	end if
+	'end if
 
 else
 

@@ -7,6 +7,6 @@
 ocon.close
 set ocon = nothing
 
-ousersession = nothing
+set ousersession = nothing
 
 %>

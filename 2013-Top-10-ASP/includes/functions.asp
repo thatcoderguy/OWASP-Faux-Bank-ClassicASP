@@ -155,7 +155,7 @@ end sub
 function GenerateToken()
 
 	'##################################################
-	'##### generate a 10 char random token (for authenticating forms) #####
+	'##### generate a 20 char random token (for authenticating forms) #####
 	'##################################################
 
 	Randomize
@@ -167,10 +167,10 @@ function GenerateToken()
 
 	token=""
 
-	''create a string of 10 random chars
-	for i=0 to 10
+	''create a string of 20 random chars
+	for i=0 to 20
 
-		token = token & chr(Int((Rnd * 62) + 1))
+		token = token & mid(usablechars,Int((Rnd * 62) + 1),1)
 
 	next
 
