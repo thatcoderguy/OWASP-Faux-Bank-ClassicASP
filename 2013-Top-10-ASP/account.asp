@@ -8,6 +8,21 @@
 
 		response.redirect "/login?error=notloggedin"
 
+	else
+
+		'##################################################
+		'##### if the site is in secure mode,         #####
+		'##### and we dont have a token cookie        #####
+		'##### then we must create one, so that an    #####
+		'##### attacker cant do a CSRF by submitting  #####
+		'##### a blank token cookie					  #####
+		'##################################################
+		if GetToken()="" and GetMode="secure" then
+
+			response.cookies("token") = GenerateToken()
+
+		end if
+
 	end if
 
 %>
