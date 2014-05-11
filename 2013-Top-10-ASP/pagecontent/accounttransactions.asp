@@ -39,13 +39,33 @@
 
 	else
 
-		while not recordset.eof
+		'##################################################
+		'##### if we are in secure mode #####
+		'##################################################
+		if GetMode()="secure" then
 
-			response.write "<tr><td>" & recordset("transactionid") & "</td><td>" & recordset("fromname") & " (" & recordset("fromaccount") & ")</td><td>" & recordset("toname") & " (" & recordset("toaccount") & ")</td><td>&pound;" & recordset("amount") &"</tr>"
+			while not recordset.eof
 
-			recordset.movenext
+				'##################################################
+				'##### sanitise the account names (to & from) #####
+				'##################################################
+				response.write "<tr><td>" & recordset("transactionid") & "</td><td>" & SanitiseInput(recordset("fromname")) & " (" & recordset("fromaccount") & ")</td><td>" & SanitiseInput(recordset("toname")) & " (" & recordset("toaccount") & ")</td><td>&pound;" & recordset("amount") &"</tr>"
 
-		wend
+				recordset.movenext
+
+			wend
+
+		else
+
+			while not recordset.eof
+
+				response.write "<tr><td>" & recordset("transactionid") & "</td><td>" & recordset("fromname") & " (" & recordset("fromaccount") & ")</td><td>" & recordset("toname") & " (" & recordset("toaccount") & ")</td><td>&pound;" & recordset("amount") &"</tr>"
+
+				recordset.movenext
+
+			wend
+
+		end if
 
 		recordset.close
 		set recordset = nothing

@@ -199,4 +199,37 @@ function GenerateToken()
 
 end function
 
+
+function regex_replace(strText,reReplace,strWith)
+
+	'##################################################
+	'##### Regular Expressions Replace #####
+	'##################################################
+
+	dim regex,intCount
+	set regex=new regexp
+
+	regex.ignorecase=false
+	regex.global=true
+	regex.pattern=reReplace
+
+	regex_replace=strText
+
+	do until not regex.test(regex_replace) or intCount>1000
+		regex_replace=regex.replace(regex_replace,strWith)
+		intCount=intCount+1
+	loop
+
+	set regex=nothing
+
+end function
+
+function SanitiseInput(strText)
+
+
+	SanitiseInput=replace(replace(replace(replace(replace(strText,"<","&lt;"),">","&gt;"),chr(34),"&quot;"),"'","&#x27"),"/","&#x2F")
+
+
+end function
+
 %>

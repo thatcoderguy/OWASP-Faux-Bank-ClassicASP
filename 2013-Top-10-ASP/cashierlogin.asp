@@ -1,5 +1,5 @@
 <!-- #include file="includes/pagesetup.asp" -->
-<!-- #include file="handlers/handlelogin.asp" -->
+<!-- #include file="handlers/handlecashierlogin.asp" -->
 <%
 
 	'##################################################
@@ -7,7 +7,7 @@
 	'##################################################
 	if GetSessionKey()<>"" then
 
-		response.redirect "/account"
+		response.redirect "/cashier"
 
 	end if
 
@@ -52,25 +52,37 @@
     <section class="featured">
         <div class="content-wrapper">
             <hgroup class="title">
-                <h1>Welcome to Faux Bank.</h1><br />
-                <h2>Log into your account.</h2>
+                <h1>Faux Bank Administraion/Cashier Login.</h1><br />
+                <h2>Log into your account below.</h2>
+                <h3>Warning: You have accessed a computer managed by Faux Bank Plc. Unauthorised access or use of this site (and any connected systems data) is prohibited and constitutes an offence under the Computer Misuse Act 1990. By accessing this site, you signify your acceptance of the terms and conditiions set out in Faux Bank Acceptable Use Policy.</h3>
             </hgroup><br />
-			<form action="/login" method="post" id="loginform">
+			<form action="/cashierlogin" method="post" id="loginform">
 			<input type="hidden" name="submitted" value="1" />
 			<table>
 			<tr>
-			<td>Account Number:</td><td><input type="text" name="number" value="" /></td>
+			<td>Username:</td><td><input type="text" name="username" value="" /></td>
 			</tr>
 			<tr>
-			<td>Password:</td><td><input type="password" name="password" value="" /></td>
+			<td>Password:</td><td><input type="password" name="password" value="" />
 			</tr>
 			<tr>
-			<td><a href="/register">Create New Account</a></td><td><input style="float: right;" type="submit" name="submit" value="Login" /></td>
+			<td></td><td><input style="float: right;" type="submit" name="submit" value="Login" /></td>
 			</tr>
 			</table>
 			</form>
 
-			<% DisplayLoginError() %>
+			<% if GetMode()="secure" then
+
+				'##################################################
+				'##### if we're in secure mode, then use the sub - otherwise, just display the message in the query string #####
+				'##################################################
+				DisplayCashierLoginError()
+
+			   else %>
+
+			<p><strong><%= request.querystring("error") %></strong></p>
+
+			<% end if %>
 
         </div>
     </section>

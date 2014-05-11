@@ -10,6 +10,20 @@ sub DisplayLoginError()
 
 end sub
 
+sub DisplayCashierLoginError()
+
+	if request.querystring("error")="Username or password incorrect" then
+
+		response.write "<p><strong>Sorry, but the username or password was invalid.</strong></p>"
+
+	else
+
+		response.write "<p><strong>You have been logged out.</strong></p>"
+
+	end if
+
+end sub
+
 
 sub DisplayTransferError()
 

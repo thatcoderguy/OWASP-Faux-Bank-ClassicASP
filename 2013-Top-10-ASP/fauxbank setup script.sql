@@ -42,7 +42,24 @@ GO
 ALTER TABLE [dbo].[tblAccount] ADD  CONSTRAINT [DF_tblAccount_balance]  DEFAULT ((100)) FOR [balance]
 GO
 
+CREATE TABLE [dbo].[tblEmployee](
+	[employeeID] [bigint] IDENTITY(1,1) NOT NULL,
+	[name] [nvarchar](300) NOT NULL,
+	[username] [nvarchar](300) NOT NULL,
+	[password] [nvarchar](128) NOT NULL,
+	[uniquehash] [nvarchar](128) NOT NULL,
+	[sessionkey] [nvarchar](50) NULL,
+	[accesslevel] [int] NOT NULL,
+ CONSTRAINT [PK_tblEmployee] PRIMARY KEY CLUSTERED 
+(
+	[employeeID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
 
+GO
+
+ALTER TABLE [dbo].[tblEmployee] ADD  CONSTRAINT [DF_Table_1_employeeAccessLevel]  DEFAULT ((0)) FOR [accesslevel]
+GO
 
 CREATE PROCEDURE sp_registeraccount
 	@strEmail nvarchar(256),
@@ -221,6 +238,96 @@ BEGIN
 		SET NOCOUNT OFF;
 
 		SELECT 'invalidaccount' as message
+
+	END
+
+END
+GO
+
+CREATE PROCEDURE [dbo].[sp_employeeauthenticate]
+	@strUsername nvarchar(300),
+	@strPassword nvarchar(128),
+	@strSessionKey nvarchar(50)
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+	DECLARE @intAccountNumber bigint
+	DECLARE @intaccesslevel as int
+	DECLARE @userID2 as bigint
+	DECLARE @strName nvarchar(500)
+
+	IF @strSessionKey='' AND @strUsername<>'' AND @strPassword<>'' BEGIN
+
+		SELECT @intAccountNumber=MIN(employeeid) FROM tblEmployee WHERE username=@strUsername AND [password]=@strPassword
+
+		IF @intAccountNumber IS NOT NULL BEGIN
+
+			DECLARE @strCodeCharacters varchar(50)
+			DECLARE @index as int
+			SET @strCodeCharacters='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+
+			WHILE @strSessionKey='' OR @userID2 IS NOT NULL BEGIN
+				SET @index=0
+				WHILE @index<48 BEGIN
+					SET @strSessionKey=@strSessionKey+SUBSTRING(@strCodeCharacters,CAST(RAND()*LEN(@strCodeCharacters) AS tinyint)+1,1)
+					SET @index=@index+1
+				END
+				SET @strSessionKey='n'+@strSessionKey+'n'
+			
+				SELECT @userID2=MIN(employeeid) FROM tblEmployee WHERE CAST(sessionkey AS varbinary(50))=CAST(@strSessionKey AS varbinary(50))
+			END
+
+			UPDATE tblAccount 
+			SET sessionkey=@strSessionKey
+			WHERE accountid=@intAccountNumber
+
+			SELECT @intaccesslevel=accesslevel,@strName=name FROM tblEmployee WHERE employeeid=@intAccountNumber
+
+			SET NOCOUNT OFF;
+			
+			SELECT 0 as errorCode,'' as errorMessage
+			
+			SELECT @strSessionKey as sessionkey,@strUsername as username,@intaccesslevel as accesslevel,@strName as name
+
+		END ELSE BEGIN
+		
+			SET NOCOUNT OFF;
+		
+			SELECT 1 as errorCode,'Invalid Session Key' as errorMessage
+			
+		END
+
+	END ELSE IF @strSessionKey<>'' AND (@intAccountNumber=0 OR  @intAccountNumber IS NULL) AND @strPassword='' BEGIN
+
+		SELECT @intAccountNumber=MIN(employeeid) FROM tblEmployee WHERE sessionkey=@strSessionKey
+
+		IF @intAccountNumber IS NOT NULL BEGIN
+
+			SELECT @intaccesslevel=accesslevel,@strName=name FROM tblEmployee WHERE employeeid=@intAccountNumber
+
+			SET NOCOUNT OFF;
+			
+			SELECT 0 as errorCode,'' as errorMessage
+
+			SELECT @strSessionKey as sessionkey,@strUsername as username,@intaccesslevel as accesslevel,@strName as name
+
+		END ELSE BEGIN
+
+			SET NOCOUNT OFF;
+		
+			SELECT 1 as errorCode,'Invalid Session Key' as errorMessage
+			
+		END
+
+
+	END ELSE BEGIN
+
+		SET NOCOUNT OFF;
+	
+		SELECT 1 as errorCode,'Invalid Session Key' as errorMessage
 
 	END
 

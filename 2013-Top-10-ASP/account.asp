@@ -66,7 +66,7 @@
 		<section class="featured">
 			<div class="content-wrapper">
 				<hgroup class="title">
-					<h1>Welcome to Faux Bank, <%= ousersession.username %> .</h1><br />
+					<h1>Welcome to Faux Bank, <%= SanitiseInput(ousersession.username) %> .</h1><br />
 					<h3>Statement for account number: <strong><%= ousersession.accountnumber %></strong></h3>
 					<h3>Your account balance is: &pound;<%= ousersession.balance %></h3>
 				</hgroup><br />
