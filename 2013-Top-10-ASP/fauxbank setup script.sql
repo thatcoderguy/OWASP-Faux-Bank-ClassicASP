@@ -15,6 +15,8 @@ CREATE TABLE [dbo].[tblAccount](
 	[passwordreminder] [nvarchar](4000) NOT NULL,
 	[sessionkey] [nvarchar](50) NULL,
 	[balance] [decimal](18, 5) NOT NULL,
+	[lastactivitiy] [datetime] NULL,
+	[useragent] [nvarchar](50) NOT NULL,
  CONSTRAINT [PK_tblAccount] PRIMARY KEY CLUSTERED 
 (
 	[accountid] ASC
@@ -50,6 +52,8 @@ CREATE TABLE [dbo].[tblEmployee](
 	[uniquehash] [nvarchar](128) NOT NULL,
 	[sessionkey] [nvarchar](50) NULL,
 	[accesslevel] [int] NOT NULL,
+	[lastactivity] [datetime] NULL,
+	[useragent] [nvarchar](50) NOT NULL,
  CONSTRAINT [PK_tblEmployee] PRIMARY KEY CLUSTERED 
 (
 	[employeeID] ASC
@@ -60,6 +64,10 @@ GO
 
 ALTER TABLE [dbo].[tblEmployee] ADD  CONSTRAINT [DF_Table_1_employeeAccessLevel]  DEFAULT ((0)) FOR [accesslevel]
 GO
+
+ALTER TABLE [dbo].[tblEmployee] ADD  CONSTRAINT [DF_tblEmployee_useragent]  DEFAULT ('') FOR [useragent]
+GO
+
 
 CREATE PROCEDURE sp_registeraccount
 	@strEmail nvarchar(256),
@@ -247,7 +255,8 @@ GO
 CREATE PROCEDURE [dbo].[sp_employeeauthenticate]
 	@strUsername nvarchar(300),
 	@strPassword nvarchar(128),
-	@strSessionKey nvarchar(50)
+	@strSessionKey nvarchar(50),
+	@strUserAgent nvarchar(50)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -280,9 +289,9 @@ BEGIN
 				SELECT @userID2=MIN(employeeid) FROM tblEmployee WHERE CAST(sessionkey AS varbinary(50))=CAST(@strSessionKey AS varbinary(50))
 			END
 
-			UPDATE tblAccount 
-			SET sessionkey=@strSessionKey
-			WHERE accountid=@intAccountNumber
+			UPDATE tblEmployee 
+			SET sessionkey=@strSessionKey,lastactivity=getdate(),useragent=@strUserAgent
+			WHERE employeeID=@intAccountNumber
 
 			SELECT @intaccesslevel=accesslevel,@strName=name FROM tblEmployee WHERE employeeid=@intAccountNumber
 
@@ -302,11 +311,25 @@ BEGIN
 
 	END ELSE IF @strSessionKey<>'' AND (@intAccountNumber=0 OR  @intAccountNumber IS NULL) AND @strPassword='' BEGIN
 
-		SELECT @intAccountNumber=MIN(employeeid) FROM tblEmployee WHERE sessionkey=@strSessionKey
+		IF @strUserAgent='' BEGIN
+
+			--make sure the session is less than 30 mins old
+			SELECT @intAccountNumber=MIN(employeeid) FROM tblEmployee WHERE sessionkey=@strSessionKey
+
+		END ELSE BEGIN
+		
+			--make sure the session is less than 30 mins old
+			SELECT @intAccountNumber=MIN(employeeid) FROM tblEmployee WHERE sessionkey=@strSessionKey AND DATEDIFF(n,lastactivity,GETDATE())<30 AND useragent=@strUserAgent
+
+		END
 
 		IF @intAccountNumber IS NOT NULL BEGIN
 
-			SELECT @intaccesslevel=accesslevel,@strName=name FROM tblEmployee WHERE employeeid=@intAccountNumber
+			SELECT @intaccesslevel=accesslevel,@strName=name FROM tblEmployee WHERE employeeid=@intAccountNumber 
+			
+			UPDATE tblEmployee
+			SET lastactivity=GETDATE()
+			WHERE employeeid=@intAccountNumber 
 
 			SET NOCOUNT OFF;
 			

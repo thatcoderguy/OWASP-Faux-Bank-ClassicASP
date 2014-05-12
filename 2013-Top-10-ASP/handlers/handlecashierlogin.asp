@@ -12,7 +12,7 @@ if request.form("submitted")="1" then
 	''create a SHA512 hash of the password (include the salt)
 	passwordhash = HashString(request.form("password") & globalsalt)
 
-	ocom.commandtext = "sp_employeeauthenticate '" & SQLStr(request.form("username")) & "','" & SQLStr(passwordhash) & "','';"
+	ocom.commandtext = "sp_employeeauthenticate '" & SQLStr(request.form("username")) & "','" & SQLStr(passwordhash) & "','','" & Request.ServerVariables("HTTP_USER_AGENT") & "';"
 	set recordset = ocom.execute()
 
 	if not recordset is nothing then
@@ -36,14 +36,13 @@ if request.form("submitted")="1" then
 				''move to the next record set
 				set recordset = recordset.nextrecordset
 
-				''store sessionkey in a cookie
-				response.cookies("sessionkey")=recordset("sessionkey")
+				dim sessionkey: sessionkey=recordset("sessionkey")
 
 				recordset.close
 				set recordset = nothing
 
 				''if logged in
-				response.redirect "/cashier"
+				response.redirect "/cashier?session=" & sessionkey
 
 			end if
 

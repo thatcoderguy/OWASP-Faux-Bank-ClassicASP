@@ -1,15 +1,11 @@
-<!-- #include file="includes/cashierpagesetup.asp" -->
-<!-- #include file="handlers/handlecashierlogin.asp" -->
+<!-- #include file="handlers/securitymode.asp" -->
+<!-- #include file="includes/functions.asp" -->
+<!-- #include file="includes/cashierlinks.asp" -->
 <%
 
 	'##################################################
-	'##### if there is already a user session then redirect to the account page #####
+	'##### homepage #####
 	'##################################################
-	if GetSessionKey()<>"" then
-
-		response.redirect "/cashier?session=" & request.querystring("session")
-
-	end if
 
 %>
 <!DOCTYPE html>
@@ -38,9 +34,7 @@
                     </section>
                     <nav>
                         <ul id="menu">
-                            <li><a href="/">Home</a></li>
-                            <li><a href="/About">About</a></li>
-                            <li><a href="/Contact">Contact</a></li>
+                            <li><a href="/Cashierhome<%= "?" & request.querystring("session") %>">Home</a></li>
                             <li><% displayaccountlink() %></li>
                         </ul>
                     </nav>
@@ -52,38 +46,13 @@
     <section class="featured">
         <div class="content-wrapper">
             <hgroup class="title">
-                <h1>Faux Bank Administraion/Cashier Login.</h1><br />
-                <h2>Log into your account below.</h2>
-                <h3>Warning: You have accessed a computer managed by Faux Bank Plc. Unauthorised access or use of this site (and any connected systems data) is prohibited and constitutes an offence under the Computer Misuse Act 1990. By accessing this site, you signify your acceptance of the terms and conditiions set out in Faux Bank Acceptable Use Policy.</h3>
+                <h1>Welcome to Faux Bank.</h1><br />
+                <h2>The only bank with all of <a href="https://www.owasp.org/index.php/Top_10_2013-Top_10">oWASP.org's top 10 web vulnerabilities</a>!</h2>
             </hgroup><br />
-			<form action="/cashierlogin" method="post" id="loginform">
-			<input type="hidden" name="submitted" value="1" />
-			<table>
-			<tr>
-			<td>Username:</td><td><input type="text" name="username" value="" /></td>
-			</tr>
-			<tr>
-			<td>Password:</td><td><input type="password" name="password" value="" />
-			</tr>
-			<tr>
-			<td></td><td><input style="float: right;" type="submit" name="submit" value="Login" /></td>
-			</tr>
-			</table>
-			</form>
-
-			<% if GetMode()="secure" then
-
-				'##################################################
-				'##### if we're in secure mode, then use the sub - otherwise, just display the message in the query string #####
-				'##################################################
-				DisplayCashierLoginError()
-
-			   else %>
-
-			<p><strong><%= request.querystring("error") %></strong></p>
-
-			<% end if %>
-
+            <p>
+                Open up an account with us today and we'll credit your account with &pound;100!.
+            </p>
+            <p>It only takes seconds to register an account, all we need is your name, email address and password.</p>
         </div>
     </section>
 
@@ -120,4 +89,3 @@
 
 </body>
 </html>
-<!-- #include file="includes/pageend.asp" -->
