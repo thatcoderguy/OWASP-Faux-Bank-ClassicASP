@@ -9,11 +9,11 @@ function validateSession()
 
 	if GetMode()="secure" then
 
-		ocom.commandtext = "sp_employeeauthenticate 0,'','" & request.querystring("session") & "','" & Request.ServerVariables("HTTP_USER_AGENT") & "';"
+		ocom.commandtext = "sp_employeeauthenticate 0,'','" & request.querystring("session") & "','" & Request.ServerVariables("HTTP_USER_AGENT") & "','" & Request.ServerVariables("REMOTE_ADDR") & "';"
 
 	else
 
-		ocom.commandtext = "sp_employeeauthenticate 0,'','" & request.querystring("session") & "','';"
+		ocom.commandtext = "sp_employeeauthenticate 0,'','" & request.querystring("session") & "','','';"
 
 	end if
 
