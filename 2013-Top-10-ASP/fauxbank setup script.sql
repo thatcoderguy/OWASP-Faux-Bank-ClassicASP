@@ -54,6 +54,7 @@ CREATE TABLE [dbo].[tblEmployee](
 	[accesslevel] [int] NOT NULL,
 	[lastactivity] [datetime] NULL,
 	[useragent] [nvarchar](50) NOT NULL,
+	[ipaddress] [nvarchar] (20) NOT NULL,
  CONSTRAINT [PK_tblEmployee] PRIMARY KEY CLUSTERED 
 (
 	[employeeID] ASC
@@ -66,6 +67,9 @@ ALTER TABLE [dbo].[tblEmployee] ADD  CONSTRAINT [DF_Table_1_employeeAccessLevel]
 GO
 
 ALTER TABLE [dbo].[tblEmployee] ADD  CONSTRAINT [DF_tblEmployee_useragent]  DEFAULT ('') FOR [useragent]
+GO
+
+ALTER TABLE [dbo].[tblEmployee] ADD  CONSTRAINT [DF_tblEmployee_ipaddress]  DEFAULT ('') FOR [ipaddress]
 GO
 
 
@@ -256,7 +260,8 @@ CREATE PROCEDURE [dbo].[sp_employeeauthenticate]
 	@strUsername nvarchar(300),
 	@strPassword nvarchar(128),
 	@strSessionKey nvarchar(50),
-	@strUserAgent nvarchar(50)
+	@strUserAgent nvarchar(50),
+	@strIPAddress nvarchar(20)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -313,13 +318,13 @@ BEGIN
 
 		IF @strUserAgent='' BEGIN
 
-			--make sure the session is less than 30 mins old
+			--just check the sesion key
 			SELECT @intAccountNumber=MIN(employeeid) FROM tblEmployee WHERE sessionkey=@strSessionKey
 
 		END ELSE BEGIN
 		
-			--make sure the session is less than 30 mins old
-			SELECT @intAccountNumber=MIN(employeeid) FROM tblEmployee WHERE sessionkey=@strSessionKey AND DATEDIFF(n,lastactivity,GETDATE())<30 AND useragent=@strUserAgent
+			--make sure the session is less than 30 mins old and the user agent matches
+			SELECT @intAccountNumber=MIN(employeeid) FROM tblEmployee WHERE sessionkey=@strSessionKey AND DATEDIFF(n,lastactivity,GETDATE())<30 AND useragent=@strUserAgent AND ipaddress=@strIPAddress
 
 		END
 
