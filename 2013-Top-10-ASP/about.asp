@@ -17,7 +17,7 @@
         <link href="/Content/site.css" rel="stylesheet"/>
 
         <script src="/Scripts/modernizr-2.6.2.js"></script>
-
+		<script src="/Scripts/misc.js"></script>
     </head>
     <body>
         <header>

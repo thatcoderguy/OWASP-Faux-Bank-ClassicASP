@@ -6,13 +6,13 @@ sub displayaccountlink()
 	'##### create the login/account link #####
 	'##################################################
 
-	if request.querystring("session")<>"" then
+	if GetCashierSessionKey()<>"" then
 
-		response.write "<a href=""/Cashier?session=" & request.querystring("session") & """>Account</a>"
+		response.write "<a href=""/Cashier"">Account</a>"
 
 	else
 
-		response.write "<a href=""/Login?session=" & request.querystring("session") & """>Login</a>"
+		response.write "<a href=""/Cashierlogin"">Login</a>"
 
 	end if
 
@@ -26,11 +26,11 @@ sub displaysecurelink()
 
 	if GetMode()="normal" then
 
-		response.write "<a href=""?setmode=secure&session=" & request.querystring("session") & """>Switch to secure mode</a>"
+		response.write "<a href=""?setmode=secure"">Switch to secure mode</a>"
 
 	else
 
-		response.write "<a href=""?setmode=normal&session=" & request.querystring("session") & """>Switch to normal mode</a>"
+		response.write "<a href=""?setmode=normal"">Switch to normal mode</a>"
 
 	end if
 

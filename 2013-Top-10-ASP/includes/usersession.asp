@@ -7,7 +7,7 @@ function validateSession()
 
 	dim ouser,recordset
 
-	ocom.commandtext = "sp_authenticate 0,'','" & GetSessionKey() & "';"
+	ocom.commandtext = "sp_authenticate 0,'','" & sqlstr(GetSessionKey()) & "';"
 	set recordset = ocom.execute()
 
 	if recordset.eof then

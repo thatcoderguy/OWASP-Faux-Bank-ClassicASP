@@ -9,11 +9,11 @@ function validateSession()
 
 	if GetMode()="secure" then
 
-		ocom.commandtext = "sp_employeeauthenticate 0,'','" & request.querystring("session") & "','" & Request.ServerVariables("HTTP_USER_AGENT") & "','" & Request.ServerVariables("REMOTE_ADDR") & "';"
+		ocom.commandtext = "sp_employeeauthenticate 0,'','" & sqlstr(GetCashierSessionKey()) & "','" & sqlstr(Request.ServerVariables("HTTP_USER_AGENT")) & "','';"
 
 	else
 
-		ocom.commandtext = "sp_employeeauthenticate 0,'','" & request.querystring("session") & "','','';"
+		ocom.commandtext = "sp_employeeauthenticate 0,'','" & sqlstr(GetCashierSessionKey()) & "','','';"
 
 	end if
 
@@ -38,6 +38,7 @@ function validateSession()
 			''create a user object and populate with userful user information
 			ouser.username = recordset("name")
 			ouser.accesslevel = recordset("accesslevel")
+			response.cookies("cashiersessionkey") = recordset("sessionkey")
 
 			recordset.close
 			set recordset = nothing

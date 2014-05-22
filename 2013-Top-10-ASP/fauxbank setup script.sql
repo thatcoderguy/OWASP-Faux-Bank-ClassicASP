@@ -256,6 +256,7 @@ BEGIN
 END
 GO
 
+
 CREATE PROCEDURE [dbo].[sp_employeeauthenticate]
 	@strUsername nvarchar(300),
 	@strPassword nvarchar(128),
@@ -272,6 +273,8 @@ BEGIN
 	DECLARE @intaccesslevel as int
 	DECLARE @userID2 as bigint
 	DECLARE @strName nvarchar(500)
+	DECLARE @strCodeCharacters varchar(50)
+	DECLARE @index as int
 
 	IF @strSessionKey='' AND @strUsername<>'' AND @strPassword<>'' BEGIN
 
@@ -279,8 +282,7 @@ BEGIN
 
 		IF @intAccountNumber IS NOT NULL BEGIN
 
-			DECLARE @strCodeCharacters varchar(50)
-			DECLARE @index as int
+			----create a session key
 			SET @strCodeCharacters='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
 
 			WHILE @strSessionKey='' OR @userID2 IS NOT NULL BEGIN
@@ -294,6 +296,7 @@ BEGIN
 				SELECT @userID2=MIN(employeeid) FROM tblEmployee WHERE CAST(sessionkey AS varbinary(50))=CAST(@strSessionKey AS varbinary(50))
 			END
 
+			--store the session key, last activity and user agent
 			UPDATE tblEmployee 
 			SET sessionkey=@strSessionKey,lastactivity=getdate(),useragent=@strUserAgent
 			WHERE employeeID=@intAccountNumber
@@ -321,17 +324,36 @@ BEGIN
 			--just check the sesion key
 			SELECT @intAccountNumber=MIN(employeeid) FROM tblEmployee WHERE sessionkey=@strSessionKey
 
-		END ELSE BEGIN
+		END ELSE BEGIN --security mode
 		
 			--make sure the session is less than 30 mins old and the user agent matches
-			SELECT @intAccountNumber=MIN(employeeid) FROM tblEmployee WHERE sessionkey=@strSessionKey AND DATEDIFF(n,lastactivity,GETDATE())<30 AND useragent=@strUserAgent AND ipaddress=@strIPAddress
+			SELECT @intAccountNumber=MIN(employeeid) FROM tblEmployee WHERE sessionkey=@strSessionKey AND DATEDIFF(n,lastactivity,GETDATE())<30 AND useragent=@strUserAgent--- AND ipaddress=@strIPAddress
 
+			----create a new session key
+			SET @strCodeCharacters='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+
+			WHILE @strSessionKey='' OR @userID2 IS NOT NULL BEGIN
+				SET @index=0
+				WHILE @index<48 BEGIN
+					SET @strSessionKey=@strSessionKey+SUBSTRING(@strCodeCharacters,CAST(RAND()*LEN(@strCodeCharacters) AS tinyint)+1,1)
+					SET @index=@index+1
+				END
+				SET @strSessionKey='n'+@strSessionKey+'n'
+			
+				SELECT @userID2=MIN(employeeid) FROM tblEmployee WHERE CAST(sessionkey AS varbinary(50))=CAST(@strSessionKey AS varbinary(50))
+			END
+			
+			--rotate the session key
+			UPDATE tblEmployee
+			SET sessionkey=@strSessionKey
+			WHERE employeeid=@intAccountNumber
+		
 		END
 
 		IF @intAccountNumber IS NOT NULL BEGIN
 
-			SELECT @intaccesslevel=accesslevel,@strName=name FROM tblEmployee WHERE employeeid=@intAccountNumber 
-			
+			SELECT @intaccesslevel=accesslevel,@strName=name FROM tblEmployee WHERE employeeid=@intAccountNumber
+
 			UPDATE tblEmployee
 			SET lastactivity=GETDATE()
 			WHERE employeeid=@intAccountNumber 
@@ -360,4 +382,5 @@ BEGIN
 	END
 
 END
+
 GO

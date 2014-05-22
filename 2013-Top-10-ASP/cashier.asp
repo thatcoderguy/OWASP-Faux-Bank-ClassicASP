@@ -4,7 +4,7 @@
 	'##################################################
 	'##### if there isnt a user session then redirect to the login page #####
 	'##################################################
-	if request.querystring("session")="" or ousersession is nothing then
+	if GetCashierSessionKey()="" or ousersession is nothing then
 
 		response.redirect "/cashierlogin?error=notloggedin"
 
@@ -36,6 +36,7 @@
         <link href="/Content/site.css" rel="stylesheet"/>
 
         <script src="/Scripts/modernizr-2.6.2.js"></script>
+        <script src="/Scripts/misc.js"></script>
 
     </head>
     <body>
@@ -52,7 +53,7 @@
                     </section>
                     <nav>
                         <ul id="menu">
-                            <li><a href="/Cashierhome<%="?session=" & request.querystring("session") %>">Home</a></li>
+                            <li><a href="/Cashierhome">Home</a></li>
                             <li><% displayaccountlink()%></li>
                         </ul>
                     </nav>

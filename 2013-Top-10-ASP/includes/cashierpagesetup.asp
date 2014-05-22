@@ -17,14 +17,18 @@ globalsalt = "lIcqreAN2ESpWUtVMrZfp"
 '##### if we have a session cookie, then validate the user #####
 '##################################################
 
-if request.querystring("session")<>"" then
+if GetCashierSessionKey()<>"" then
 
 	set ousersession = validateSession()
 
+	if ousersession is nothing then
+
+		clearSessionCookie()
+
+	end if
+
 else
-
 	set ousersession = nothing
-
 end if
 
 %>

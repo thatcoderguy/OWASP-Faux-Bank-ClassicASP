@@ -5,9 +5,9 @@
 	'##################################################
 	'##### if there is already a user session then redirect to the account page #####
 	'##################################################
-	if GetSessionKey()<>"" then
+	if GetCashierSessionKey()<>"" then
 
-		response.redirect "/cashier?session=" & request.querystring("session")
+		response.redirect "/cashier"
 
 	end if
 
@@ -22,6 +22,7 @@
         <link href="/Content/site.css" rel="stylesheet"/>
 
         <script src="/Scripts/modernizr-2.6.2.js"></script>
+        <script src="/Scripts/misc.js"></script>
 
     </head>
     <body>

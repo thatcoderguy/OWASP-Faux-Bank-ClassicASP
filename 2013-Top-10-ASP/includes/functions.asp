@@ -163,6 +163,34 @@ function GetSessionKey()
 
 end function
 
+function GetCashierSessionKey()
+
+	'##################################################
+	'##### return the session key (if there is one) #####
+	'##################################################
+
+	''if we have a sessionkey cookie
+	if not request.cookies("cashiersessionkey") is nothing then
+
+		''and the sessionkey is valid, then display an account link instead of login link
+		if request.cookies("cashiersessionkey")<>"SESSIONKEYINVALID" and request.cookies("cashiersessionkey")<>"" then
+
+			GetCashierSessionKey=request.cookies("cashiersessionkey")
+
+		else
+
+			GetCashierSessionKey=""
+
+		end if
+
+	else
+
+		GetCashierSessionKey=""
+
+	end if
+
+end function
+
 sub clearSessionCookie()
 
 	'##################################################
