@@ -11,16 +11,16 @@
 	<input type="hidden" name="submitted" value="1" />
 	<table>
 	<tr>
-	<td>Name:</td><td><input type="text" name="name" required  value="" />
+	<td>Name:</td><td><input type="text" name="name" required  value="" /></td>
 	</tr>
 	<tr>
-	<td>Email Address:</td><td><input type="email" name="email" required value="" />
+	<td>Email Address:</td><td><input type="email" name="email" required value="" /></td>
 	</tr>
 	<tr>
-	<td>Password:</td><td><input type="password" name="password" required  value="" />
+	<td>Password:</td><td><input type="password" name="password" required  value="" /></td>
 	</tr>
 	<tr>
-	<td>Password Reminder:</td><td><input type="text" name="passwordreminder" required  value="" />
+	<td>Password Reminder:</td><td><input type="text" name="passwordreminder" required  value="" /></td>
 	</tr>
 	<tr>
 	<td colspan="2"><input  style="float: right;" type="submit" name="submit" value="Register" /></td>

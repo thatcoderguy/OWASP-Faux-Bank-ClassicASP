@@ -28,7 +28,7 @@ if request.form("submitted")="1" then
 
 			if request.cookies("token")=request.form("token") then
 
-				ocom.commandtext = "sp_createtransaction " & SqlNum(request.form("accountto")) & "," & SqlNum(request.form("amount"))& ",'" & SQLStr(request.cookies("sessionkey")) & "';"
+				ocom.commandtext = "sp_createtransaction '" & SQLStr(request.cookies("sessionkey")) & "'," & SqlNum(request.form("accountto")) & "," & SqlNum(request.form("amount"))& ";"
 				set recordset = ocom.execute()
 
 				''no recordsets returned
@@ -80,7 +80,7 @@ if request.form("submitted")="1" then
 	'##################################################
 	else
 
-		ocom.commandtext = "sp_createtransaction " & SqlNum(request.form("accountto")) & "," & SqlNum(request.form("amount"))& ",'" & SQLStr(request.cookies("sessionkey")) & "';"
+		ocom.commandtext = "sp_createtransaction '" & SQLStr(request.cookies("sessionkey")) & "'," & SqlNum(request.form("accountto")) & "," & SqlNum(request.form("amount"))& ";"
 		set recordset = ocom.execute()
 
 		''no recordsets returned

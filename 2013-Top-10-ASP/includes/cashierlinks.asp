@@ -8,7 +8,7 @@ sub displayaccountlink()
 
 	if GetCashierSessionKey()<>"" then
 
-		response.write "<a href=""/Cashier"">Account</a>"
+		response.write "<a href=""/Cashier"">Cashier</a>"
 
 	else
 
@@ -33,6 +33,16 @@ sub displaysecurelink()
 		response.write "<a href=""?setmode=normal"">Switch to normal mode</a>"
 
 	end if
+
+end sub
+
+sub displaysuperadminlink()
+
+	if cint(ousersession.accesslevel)=10 then
+
+		response.write "<li><a href=""/accountadmin"">Account Admin</a></li>"
+
+    end if
 
 end sub
 

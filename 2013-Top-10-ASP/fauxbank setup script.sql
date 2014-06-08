@@ -204,9 +204,9 @@ END
 GO
 
 CREATE PROCEDURE sp_createtransaction
+	@strSessionKey nvarchar(50),
 	@intToAccountID bigint,
-	@intAmount decimal(18,5),
-	@strSessionKey nvarchar(50)
+	@intAmount decimal(18,5)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -383,4 +383,19 @@ BEGIN
 
 END
 
+GO
+
+CREATE PROCEDURE sp_searchaccounts 
+	@strAccountName nvarchar(256),
+	@intAccountNumber bigint
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT OFF;
+
+	SELECT name,accountid
+	FROM tblAccount 
+	WHERE (name LIKE '%' + @strAccountName + '%' AND @strAccountName<>'') OR accountid=@intAccountNumber
+END
 GO

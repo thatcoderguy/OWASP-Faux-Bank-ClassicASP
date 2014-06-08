@@ -6,13 +6,23 @@
 
 	dim recordset,pagenumber
 
+	pagenumber=request.querystring("page")
+	if pagenumber="" then pagenumber="1"
 
-	''handle pagination
-	if isnumeric(request.querystring("page")) then
+	if GetMode()="secure" then
 
-		if cint(request.querystring("page"))>1 then
+		''handle pagination
+		if isnumeric(request.querystring("page")) then
 
-			pagenumber = cint(request.querystring("page"))
+			if cint(request.querystring("page"))>1 then
+
+				pagenumber = cint(request.querystring("page"))
+
+			else
+
+				pagenumber = 1
+
+			end if
 
 		else
 
@@ -20,14 +30,9 @@
 
 		end if
 
-	else
-
-		pagenumber = 1
-
 	end if
 
-
-	ocom.commandtext = "sp_gettransactions '" & GetSessionKey() & "'," & cstr(pagenumber) & ";"
+	ocom.commandtext = "sp_gettransactions '" & GetSessionKey() & "',1;"
 	set recordset = ocom.execute()
 
 	'''print out account's transactions

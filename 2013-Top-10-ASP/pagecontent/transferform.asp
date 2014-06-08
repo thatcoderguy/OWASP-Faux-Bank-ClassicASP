@@ -38,7 +38,7 @@ if not transactioncomplete then
 		<input type="hidden" name="token" value="<%= token %>" />
 		<table>
 		<tr>
-		<td>Transfer to Account:</td><td>&nbsp;<input type="text" name="accountto" value="" />
+		<td>Transfer to Account:</td><td>&nbsp;<input type="text" name="accountto" value="" /></td>
 		</tr>
 		<tr>
 		<td>Amount:</td><td>&pound;<input type="text" name="amount" value="0" /></td>
@@ -59,7 +59,7 @@ if not transactioncomplete then
 		<input type="hidden" name="submitted" value="1" />
 		<table>
 		<tr>
-		<td>Transfer to Account:</td><td>&nbsp;<input type="text" name="accountto" value="" />
+		<td>Transfer to Account:</td><td>&nbsp;<input type="text" name="accountto" value="" /></td>
 		</tr>
 		<tr>
 		<td>Amount:</td><td>&pound;<input type="text" name="amount" value="0" /></td>

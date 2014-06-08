@@ -68,24 +68,8 @@
 				<hgroup class="title">
 					<h1>Welcome to the cashier menu, <%= ousersession.username%></h1><br />
 				</hgroup><br />
-				<h2>Find Account</h2>
 
-				<form action="/manageaccount" method="get" id="loginform">
-				<table>
-				<tr>
-				<td>Enter Account Number:</td><td><input type="text" name="findaccountnumber"  value="" /></td>
-				</tr>
-				<tr>
-				<td>Or</td><td></td>
-				</tr>
-				<tr>
-				<td>Enter Name:</td><td><input type="text" name="findaccountname"  value="" /></td>
-				</tr>
-				<tr>
-				<td colspan="2"><input  style="float: right;" type="submit" value="Find Account" /></td>
-				</tr>
-				</table>
-				</form>
+				<!-- #include file="pagecontent/accountdetails.asp" -->
 
 			</div>
 		</section>
