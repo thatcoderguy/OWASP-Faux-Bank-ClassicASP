@@ -17,6 +17,7 @@ CREATE TABLE [dbo].[tblAccount](
 	[balance] [decimal](18, 5) NOT NULL,
 	[lastactivitiy] [datetime] NULL,
 	[useragent] [nvarchar](50) NOT NULL,
+	[accountdeleted] [bit] NOT NULL,
  CONSTRAINT [PK_tblAccount] PRIMARY KEY CLUSTERED 
 (
 	[accountid] ASC
@@ -41,7 +42,17 @@ CREATE TABLE [dbo].[tblTransaction](
 ) ON [PRIMARY]
 
 GO
+
 ALTER TABLE [dbo].[tblAccount] ADD  CONSTRAINT [DF_tblAccount_balance]  DEFAULT ((100)) FOR [balance]
+GO
+
+ALTER TABLE [dbo].[tblAccount] ADD  CONSTRAINT [DF_tblAccount_passwordreminder]  DEFAULT ('') FOR [passwordreminder]
+GO
+
+ALTER TABLE [dbo].[tblAccount] ADD  CONSTRAINT [DF_tblAccount_salt]  DEFAULT ('') FOR [salt]
+GO
+
+ALTER TABLE [dbo].[tblAccount] ADD  CONSTRAINT [DF_tblAccount_accountdeleted]  DEFAULT ((0)) FOR [accountdeleted]
 GO
 
 CREATE TABLE [dbo].[tblEmployee](
@@ -385,17 +396,111 @@ END
 
 GO
 
-CREATE PROCEDURE sp_searchaccounts 
+CREATE PROCEDURE [dbo].[sp_searchaccounts] 
+	@strSessionKey nvarchar(50),
 	@strAccountName nvarchar(256),
 	@intAccountNumber bigint
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
-	SET NOCOUNT OFF;
+	SET NOCOUNT ON;
+	
+	DECLARE @intAccountID bigint
+	SELECT @intAccountID=MIN(employeeid) FROM tblEmployee WHERE sessionkey=@strSessionKey
 
-	SELECT name,accountid
-	FROM tblAccount 
-	WHERE (name LIKE '%' + @strAccountName + '%' AND @strAccountName<>'') OR accountid=@intAccountNumber
+	IF @intAccountID IS NOT NULL BEGIN
+
+		SET NOCOUNT OFF;
+
+		SELECT name,accountid
+		FROM tblAccount 
+		WHERE ((name LIKE '%' + @strAccountName + '%' AND @strAccountName<>'') OR accountid=@intAccountNumber AND accountdeleted=0)
+		
+	END
+	
+END
+GO
+
+CREATE PROCEDURE [dbo].[sp_listaccounts] 
+	@strSessionKey nvarchar(50)
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+	
+	DECLARE @intAccountID bigint
+	SELECT @intAccountID=MIN(employeeid) FROM tblEmployee WHERE sessionkey=@strSessionKey
+
+	IF @intAccountID IS NOT NULL BEGIN
+
+		SET NOCOUNT OFF;
+
+		SELECT name,accountid
+		FROM tblAccount 
+		WHERE accountdeleted=0
+		
+	END
+	
+END
+GO
+
+CREATE PROCEDURE sp_deleteaccount
+	@strSessionKey nvarchar(50),
+	@intAccountID bigint
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+	DECLARE @intEmployeeID bigint
+	SELECT @intEmployeeID=MIN(employeeid) FROM tblEmployee WHERE sessionkey=@strSessionKey
+
+	IF @intEmployeeID IS NOT NULL BEGIN
+		UPDATE tblAccount 
+		SET accountdeleted=1
+		WHERE accountID=@intAccountID
+	END
+END
+GO
+CREATE PROCEDURE [dbo].[sp_getaccount]
+	@strSessionKey nvarchar(50),
+	@intAccountID bigint
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+	DECLARE @intEmployeeID bigint
+	SELECT @intEmployeeID=MIN(employeeid) FROM tblEmployee WHERE sessionkey=@strSessionKey
+
+	IF @intEmployeeID IS NOT NULL BEGIN
+		SELECT name as accountname,email as accountemail,accountid FROM tblAccount WHERE accountid=@intAccountID
+	END
+END
+GO
+
+CREATE PROCEDURE [dbo].[sp_updateaccount]
+	@strSessionKey nvarchar(50),
+	@intAccountID bigint,
+	@strName nvarchar(256),
+	@strEmail nvarchar(256)
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+	DECLARE @intEmployeeID bigint
+	SELECT @intEmployeeID=MIN(employeeid) FROM tblEmployee WHERE sessionkey=@strSessionKey
+
+	IF @intEmployeeID IS NOT NULL BEGIN
+		UPDATE tblAccount 
+		SET name=@strName,email=@strEmail
+		WHERE accountID=@intAccountID
+	END
 END
 GO

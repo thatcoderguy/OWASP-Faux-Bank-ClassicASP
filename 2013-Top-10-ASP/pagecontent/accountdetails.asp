@@ -8,7 +8,7 @@
 	''secure mode - use storedprocedure
 	else
 
-		ocom.commandtext = "sp_searchaccounts '" & SQLStr(request.querystring("findaccountname")) & "'," & SQLNum(request.querystring("findaccountnumber")) & ";"
+		ocom.commandtext = "sp_searchaccounts '" & SQLStr(request.cookies("cashiersessionkey")) & "','" & SQLStr(request.querystring("findaccountname")) & "'," & SQLNum(request.querystring("findaccountnumber")) & ";"
 
 	end if
 
@@ -27,7 +27,7 @@
 
 		do while not recordset.eof
 
-			response.write "<tr><td>" & recordset("accountid") & " - " & recordset("name") & "</td><td><a href=""/manageaccount?account=" & recordset("accountid") & """>Manage Account</a></td></tr>"
+			response.write "<tr><td>" & recordset("accountid") & " - " & SanitiseInput(recordset("name")) & "</td><td><a href=""/manageaccount?account=" & recordset("accountid") & """>Manage Account</a></td></tr>"
 
 			recordset.movenext
 

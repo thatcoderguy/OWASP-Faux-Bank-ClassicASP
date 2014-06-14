@@ -198,6 +198,7 @@ sub clearSessionCookie()
 	'##################################################
 
 	response.cookies("sessionkey")=""
+	response.cookies("cashiersessionkey")=""
 
 end sub
 

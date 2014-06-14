@@ -38,7 +38,7 @@ end sub
 
 sub displaysuperadminlink()
 
-	if cint(ousersession.accesslevel)=10 then
+	if cint(ousersession.accesslevel) > 5 then
 
 		response.write "<li><a href=""/accountadmin"">Account Admin</a></li>"
 
