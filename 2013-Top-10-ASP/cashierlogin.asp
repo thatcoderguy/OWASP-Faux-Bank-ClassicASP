@@ -16,7 +16,7 @@
 <html lang="en">
     <head>
         <meta charset="utf-8" />
-        <title>Home Page - My ASP.NET MVC Application</title>
+        <title>Login - OWASP Faux Bank</title>
         <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon" />
         <meta name="viewport" content="width=device-width" />
         <link href="/Content/site.css" rel="stylesheet"/>
@@ -53,9 +53,9 @@
     <section class="featured">
         <div class="content-wrapper">
             <hgroup class="title">
-                <h1>Faux Bank Administraion/Cashier Login.</h1><br />
+                <h1>OWASP Faux Bank Administraion/Cashier Login.</h1><br />
                 <h2>Log into your account below.</h2>
-                <h3>Warning: You have accessed a computer managed by Faux Bank Plc. Unauthorised access or use of this site (and any connected systems data) is prohibited and constitutes an offence under the Computer Misuse Act 1990. By accessing this site, you signify your acceptance of the terms and conditiions set out in Faux Bank Acceptable Use Policy.</h3>
+                <h3>Warning: You have accessed a computer managed by OWASP Faux Bank Plc. Unauthorised access or use of this site (and any connected systems data) is prohibited and constitutes an offence under the Computer Misuse Act 1990. By accessing this site, you signify your acceptance of the terms and conditiions set out in Faux Bank Acceptable Use Policy.</h3>
             </hgroup><br />
 			<form action="/cashierlogin" method="post" id="loginform">
 			<input type="hidden" name="submitted" value="1" />
@@ -94,15 +94,13 @@
 <ol class="round">
     <li class="one">
         <h5>We just keep getting better!</h5>
-        Faux Bank has just been voted the world's most insecure online bank. Seriously, if you put money in your account,
-        dont count on it being there in the morning! You could store your money in a plastic bag, and put it in the middle of Somalia, and it would be more safe than with us!
-        <a href="/about">Learn more..</a>
+        OWASP Faux Bank is now an official OWASP project - you can view the WIKI here: <a href="https://www.owasp.org/index.php/OWASP_Faux_Bank_Project">https://www.owasp.org/index.php/OWASP_Faux_Bank_Project</a>. Why not sign up to the mailing list, or find out how you can contribute to this project?
     </li>
 
     <li class="two">
         <h5>Open source banking software</h5>
         The source to this project has been published on GitHub, why not contribute, and port this project to other languages.
-        <a href="http://www.github.com/thatcoderguy/faux-bank">Learn more...</a>
+        <a href="http://www.github.com/thatcoderguy/owasp-faux-bank">Learn more...</a>
     </li>
 
 </ol>

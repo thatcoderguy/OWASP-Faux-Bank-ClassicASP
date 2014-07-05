@@ -30,7 +30,7 @@
 <html lang="en">
     <head>
         <meta charset="utf-8" />
-        <title>Home Page - My ASP.NET MVC Application</title>
+        <title>Account - OWASP Faux Bank</title>
         <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon" />
         <meta name="viewport" content="width=device-width" />
         <link href="/Content/site.css" rel="stylesheet"/>
@@ -67,7 +67,7 @@
 		<section class="featured">
 			<div class="content-wrapper">
 				<hgroup class="title">
-					<h1>Welcome to Faux Bank, <%= SanitiseInput(ousersession.username) %> .</h1><br />
+					<h1>Welcome to OWASP Faux Bank, <%= SanitiseInput(ousersession.username) %> .</h1><br />
 					<h3>Statement for account number: <strong><%= ousersession.accountnumber %></strong></h3>
 					<h3>Your account balance is: &pound;<%= ousersession.balance %></h3>
 				</hgroup><br />

@@ -11,7 +11,7 @@
 <html lang="en">
     <head>
         <meta charset="utf-8" />
-        <title>About - My ASP.NET MVC Application</title>
+        <title>About - OWASP Faux Bank</title>
         <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon" />
         <meta name="viewport" content="width=device-width" />
         <link href="/Content/site.css" rel="stylesheet"/>
@@ -49,29 +49,29 @@
 
 <hgroup class="title">
     <h1>About.</h1>
-    <h2>Faux Bank is an open source project designed as a proof of concept for <a href="https://www.owasp.org/index.php/Top_10_2013-Top_10">oWASP's top 10 vulnerabilities</a> and as an educational tool for web developers.</h2>
+    <h2>OWASP Faux Bank is an open source project designed as a proof of concept for <a href="https://www.owasp.org/index.php/Top_10_2013-Top_10">oWASP's top 10 vulnerabilities</a> and as an educational tool for web developers.</h2>
 </hgroup>
 
 <article>
     <p>
-        You can view the source code to this project and help contribute to it by going to <a href="http://www.github.com/thatcoderguy/faux-bank">github.com/thatcoderguy/faux-bank</a>.
+        You can view the source code to this project and help contribute to it by going to <a href="http://www.github.com/thatcoderguy/owasp-faux-bank">github.com/thatcoderguy/owasp-faux-bank</a>.
     </p>
 
     <p>
         So far the following vulnerabilities has been implemented into the project:
         <ol>
         <li>Cross Site Request Forgery (CSRF or XSRF)</li>
-        </ol>
-
-        The other 9 security vulnerabilities to implement are:
-        <ol>
         <li>Cross Site Scripting (XSS)</li>
         <li>SQL Injection</li>
         <li>Broken Authentication and Session Management</li>
+        <li>Missing Function Level Access Control</li>
+        </ol>
+
+        The other 5 security vulnerabilities to implement are:
+        <ol>
         <li>Insecure Direct Object Reference</li>
         <li>Security Misconfigration</li>
         <li>Sensitive Data Exposure</li>
-        <li>Missing Function Level Access Control</li>
         <li>Using Components With Know Vulnerabilities</li>
         <li>Unvalidated Redirects and Forwards</li>
         </ol>

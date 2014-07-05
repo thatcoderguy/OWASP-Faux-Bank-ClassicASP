@@ -12,7 +12,7 @@
 <html lang="en">
     <head>
         <meta charset="utf-8" />
-        <title>Home Page - My ASP.NET MVC Application</title>
+        <title>Home - OWASP Faux Bank</title>
         <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon" />
         <meta name="viewport" content="width=device-width" />
         <link href="/Content/site.css" rel="stylesheet"/>
@@ -63,15 +63,13 @@
 <ol class="round">
     <li class="one">
         <h5>We just keep getting better!</h5>
-        Faux Bank has just been voted the world's most insecure online bank. Seriously, if you put money in your account,
-        dont count on it being there in the morning! You could store your money in a plastic bag, and put it in the middle of Somalia, and it would be more safe than with us!
-        <a href="/about">Learn more..</a>
+        OWASP Faux Bank is now an official OWASP project - you can view the WIKI here: <a href="https://www.owasp.org/index.php/OWASP_Faux_Bank_Project">https://www.owasp.org/index.php/OWASP_Faux_Bank_Project</a>. Why not sign up to the mailing list, or find out how you can contribute to this project?
     </li>
 
     <li class="two">
         <h5>Open source banking software</h5>
         The source to this project has been published on GitHub, why not contribute, and port this project to other languages.
-        <a href="http://www.github.com/thatcoderguy/faux-bank">Learn more...</a>
+        <a href="http://www.github.com/thatcoderguy/owasp-faux-bank">Learn more...</a>
     </li>
 
 </ol>
