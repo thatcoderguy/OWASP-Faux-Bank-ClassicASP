@@ -42,8 +42,36 @@ if request.form("submitted")="1" then
 				recordset.close
 				set recordset = nothing
 
-				''if logged in
-				response.redirect "/Account"
+				''if there is a return url, then we want to redirect to that
+				if request.querystring("returnurl") <> "" then
+
+					//if in secure mode, then check that the redirect url is only a local address
+					if GetMode()="secure" then
+
+						if isLocalURL(request.querystring("returnurl")) then
+
+							//redirect to the return url
+							response.redirect request.querystring("returnurl")
+
+						else
+
+							response.redirect "/Account"
+
+						end if
+
+					else
+
+						//redirect to the return url
+						response.redirect request.querystring("returnurl")
+
+					end if
+
+				else
+
+					''if logged in
+					response.redirect "/Account"
+
+				end if
 
 			end if
 

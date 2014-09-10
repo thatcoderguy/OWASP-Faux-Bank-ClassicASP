@@ -56,7 +56,11 @@
                 <h1>Welcome to OWASP Faux Bank.</h1><br />
                 <h2>Log into your account.</h2>
             </hgroup><br />
+            <% if request.querystring("returnurl") <> "" then %>
+            <form action="/login?returnurl=<%= SanitiseInput(request.querystring("returnurl")) %>" method="post" id="loginform">
+            <% else %>
 			<form action="/login" method="post" id="loginform">
+			<% end if %>
 			<input type="hidden" name="submitted" value="1" />
 			<table>
 			<tr>

@@ -7,7 +7,7 @@
 	'##################################################
 	if GetSessionKey()="" or ousersession is nothing then
 
-		response.redirect "/login?error=notloggedin"
+		response.redirect "/login?error=notloggedin&returnurl=/transfer"
 
 	end if
 

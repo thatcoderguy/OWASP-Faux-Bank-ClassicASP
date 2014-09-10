@@ -256,8 +256,16 @@ end function
 function SanitiseInput(strText)
 
 
-	SanitiseInput=replace(replace(replace(replace(replace(strText,"<","&lt;"),">","&gt;"),chr(34),"&quot;"),"'","&#x27"),"/","&#x2F")
+	SanitiseInput=replace(replace(replace(replace(replace(strText,"<","&lt;"),">","&gt;"),chr(34),"&quot;"),"'","&#x27;"),"/","&#x2F;")
 
+
+end function
+
+''check if the url is local or external
+function isLocalURL(strUrl)
+
+''took this from the MS MVC source code
+isLocalURL = (strUrl="" AND ((left(strUrl,1) = "/" AND (len(strUrl)= 1 OR (mid(strUrl,2,1) <> "/" AND mid(strUrl,2,1) <> "\"))) OR (len(strUrl) > 1 AND left(strUrl,1) = "~" AND mid(strUrl,2,1) = "/")))
 
 end function
 
