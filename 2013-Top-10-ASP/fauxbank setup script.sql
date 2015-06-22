@@ -9,7 +9,7 @@ CREATE TABLE [dbo].[tblAccount](
 	[accountid] [bigint] IDENTITY(34534454536,1) NOT NULL,
 	[name] [nvarchar](256) NOT NULL,
 	[email] [nvarchar](256) NOT NULL,
-	[passwordhash] [nvarchar](128) NOT NULL,
+	[password] [nvarchar](128) NOT NULL,
 	[securepasswordhash] [nvarchar](500) NOT NULL,
 	[salt] [nvarchar](50) NOT NULL,
 	[passwordreminder] [nvarchar](4000) NOT NULL,
